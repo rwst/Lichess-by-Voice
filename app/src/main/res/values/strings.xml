@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Lichess by Voice</string>
+    <string name="button">Button</string>
 </resources>
