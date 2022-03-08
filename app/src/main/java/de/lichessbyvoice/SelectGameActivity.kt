@@ -1,4 +1,4 @@
-package com.example.lichessbyvoice
+package de.lichessbyvoice
 
 import android.content.Intent
 import android.net.Uri
@@ -7,25 +7,19 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 
-class MainActivity : AppCompatActivity() {
+class SelectGameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sharedPrefs = applicationContext.getSharedPreferences("prefs", MODE_PRIVATE)
-        setContentView(R.layout.activity_main)
-        val mainButton: Button = findViewById(R.id.main_button)
         val token: String? = sharedPrefs.getString("accessToken", null)
         if (token == null) {
-            mainButton.isEnabled = false
-            val intent = Intent(this, AccountActivity::class.java)
+            val intent = Intent(this, AuthFailedActivity::class.java)
             startActivity(intent)
         }
         else {
+            val mainButton: Button = findViewById(R.id.main_button)
             mainButton.setOnClickListener { gameView() }
-        }
-        val accountButton: Button = findViewById(R.id.account_main_button)
-        accountButton.setOnClickListener {
-            val intent = Intent(this, AccountActivity::class.java)
-            startActivity(intent)
+            setContentView(R.layout.selectgame_activity)
         }
     }
     private fun gameView() {
