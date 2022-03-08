@@ -1,0 +1,13 @@
+{
+  "client_id": "lichessbyvoice.de",
+  "redirect_uri": "de.lichessbyvoice:/oauth2redirect",
+  "end_session_redirect_uri": "de.lichessbyvoice:/oauth2redirect",
+  "authorization_scope": "web:login",
+  "discovery_uri": "",
+  "authorization_endpoint_uri": "https://lichess.org/oauth",
+  "token_endpoint_uri": "https://lichess.org/api/token",
+  "registration_endpoint_uri": "https://lichess.org",
+  "user_info_endpoint_uri": "https://lichess.org/account/oauth/token",
+  "end_session_endpoint": "https://lichess.org",
+  "https_required": true
+}

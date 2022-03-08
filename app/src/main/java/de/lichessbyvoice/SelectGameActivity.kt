@@ -2,24 +2,28 @@ package de.lichessbyvoice
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+import net.openid.appauthdemo.AuthStateManager
+import net.openid.appauthdemo.Configuration
 
 class SelectGameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPrefs = applicationContext.getSharedPreferences("prefs", MODE_PRIVATE)
-        val token: String? = sharedPrefs.getString("accessToken", null)
-        if (token == null) {
-            val intent = Intent(this, AuthFailedActivity::class.java)
-            startActivity(intent)
-        }
-        else {
+        val mAuthStateManager = AuthStateManager.getInstance(this)
+        val mConfiguration = Configuration.getInstance(this)
+
+        if (mAuthStateManager.current.isAuthorized) {
             val mainButton: Button = findViewById(R.id.main_button)
             mainButton.setOnClickListener { gameView() }
             setContentView(R.layout.selectgame_activity)
+        }
+        else {
+            val intent = Intent(this, AuthFailedActivity::class.java)
+            startActivity(intent)
         }
     }
     private fun gameView() {
