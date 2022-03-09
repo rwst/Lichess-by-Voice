@@ -19,9 +19,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.annotation.AnyThread
+import de.lichessbyvoice.SingletonHolder
 import net.openid.appauth.*
 import org.json.JSONException
-import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.ReentrantLock
 
@@ -31,8 +31,7 @@ import java.util.concurrent.locks.ReentrantLock
  * mutation.
  */
 class AuthStateManager private constructor(context: Context) {
-    private val mPrefs: SharedPreferences =
-        context.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
+    private val mPrefs: SharedPreferences = context.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
     private val mPrefsLock: ReentrantLock = ReentrantLock()
     private val mCurrentAuthState: AtomicReference<AuthState> = AtomicReference()
 
@@ -123,12 +122,11 @@ class AuthStateManager private constructor(context: Context) {
         }
     }
 
-    companion object {
-        private val INSTANCE_REF = AtomicReference(WeakReference<AuthStateManager?>(null))
+    companion object : SingletonHolder<AuthStateManager, Context>(::AuthStateManager) {
         private const val TAG = "AuthStateManager"
         private const val STORE_NAME = "AuthState"
         private const val KEY_STATE = "state"
-
+/*
         @AnyThread
         fun getInstance(context: Context): AuthStateManager {
             var manager = INSTANCE_REF.get().get()
@@ -138,6 +136,7 @@ class AuthStateManager private constructor(context: Context) {
             }
             return manager
         }
+*/
     }
 
 }

@@ -23,6 +23,7 @@ import android.content.res.Resources
 import android.net.Uri
 import android.text.TextUtils
 import de.lichessbyvoice.R
+import de.lichessbyvoice.SingletonHolder
 import net.openid.appauth.connectivity.ConnectionBuilder
 import net.openid.appauth.connectivity.DefaultConnectionBuilder
 import okio.BufferedSource
@@ -31,7 +32,6 @@ import okio.source
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.ref.WeakReference
 import java.nio.charset.Charset
 
 /**
@@ -39,10 +39,10 @@ import java.nio.charset.Charset
  * changes are detected by comparing the hash of the last known configuration to the read
  * configuration. When a configuration change is detected, the app state is reset.
  */
-class Configuration(private val mContext: Context) {
+class Configuration private constructor(context: Context) {
     private val mPrefs: SharedPreferences =
-        mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    private val mResources: Resources = mContext.resources
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val mResources: Resources = context.resources
     private var mConfigJson: JSONObject? = null
     private var mConfigHash: String? = null
 
@@ -55,13 +55,20 @@ class Configuration(private val mContext: Context) {
     private var mRedirectUri: Uri? = null
     private var endSessionRedirectUri: Uri? = null
     private var discoveryUri: Uri? = null
-    private var authEndpointUri: Uri? = null
-    private var tokenEndpointUri: Uri? = null
-    private var endSessionEndpoint: Uri? = null
-    private var registrationEndpointUri: Uri? = null
+    private lateinit var authEndpointUri: Uri
+    private lateinit var tokenEndpointUri: Uri
+    private lateinit var endSessionEndpoint: Uri
+    private lateinit var registrationEndpointUri: Uri
     private var userInfoEndpointUri: Uri? = null
     private var isHttpsRequired = false
 
+    init {
+        try {
+            readConfiguration(context)
+        } catch (ex: Configuration.InvalidConfigurationException) {
+            configurationError = ex.message
+        }
+    }
     /**
      * Indicates whether the configuration has changed from the last known valid state.
      */
@@ -86,8 +93,6 @@ class Configuration(private val mContext: Context) {
 
     val scope: String
         get() = (mScope)!!
-    val redirectUri: Uri
-        get() = (mRedirectUri)!!
     val connectionBuilder: ConnectionBuilder
         get() {
             return DefaultConnectionBuilder.INSTANCE
@@ -96,7 +101,7 @@ class Configuration(private val mContext: Context) {
         get() = mPrefs.getString(KEY_LAST_HASH, null)
 
     @Throws(InvalidConfigurationException::class)
-    private fun readConfiguration() {
+    private fun readConfiguration(context: Context) {
         val configSource: BufferedSource =
             mResources.openRawResource(R.raw.auth_config).source().buffer()
         val configData = okio.Buffer()
@@ -117,7 +122,7 @@ class Configuration(private val mContext: Context) {
         mScope = getRequiredConfigString("authorization_scope")
         mRedirectUri = getRequiredConfigUri("redirect_uri")
         endSessionRedirectUri = getRequiredConfigUri("end_session_redirect_uri")
-        if (!isRedirectUriRegistered) {
+        if (!isRedirectUriRegistered(context)) {
             throw InvalidConfigurationException(
                 "redirect_uri is not handled by any activity in this app! "
                         + "Ensure that the appAuthRedirectScheme in your build.gradle file "
@@ -137,6 +142,53 @@ class Configuration(private val mContext: Context) {
             discoveryUri = getRequiredConfigWebUri("discovery_uri")
         }
         isHttpsRequired = mConfigJson!!.optBoolean("https_required", true)
+    }
+
+    /**
+     * Returns a description of the configuration error, if the configuration is invalid.
+     */
+    fun getConfigurationError(): String? {
+        return configurationError
+    }
+
+    fun getClientId(): String? {
+        return clientId
+    }
+
+    fun getRedirectUri(): Uri {
+        return mRedirectUri!!
+    }
+
+    fun getDiscoveryUri(): Uri? {
+        return discoveryUri
+    }
+
+    fun getEndSessionRedirectUri(): Uri? {
+        return endSessionRedirectUri
+    }
+
+    fun getAuthEndpointUri(): Uri {
+        return authEndpointUri
+    }
+
+    fun getTokenEndpointUri(): Uri {
+        return tokenEndpointUri
+    }
+
+    fun getEndSessionEndpoint(): Uri {
+        return endSessionEndpoint
+    }
+
+    fun getRegistrationEndpointUri(): Uri {
+        return registrationEndpointUri
+    }
+
+    fun getUserInfoEndpointUri(): Uri? {
+        return userInfoEndpointUri
+    }
+
+    fun isHttpsRequired(): Boolean {
+        return isHttpsRequired
     }
 
     private fun getConfigString(propName: String?): String? {
@@ -195,16 +247,15 @@ class Configuration(private val mContext: Context) {
 
     // ensure that the redirect URI declared in the configuration is handled by some activity
     // in the app, by querying the package manager speculatively
-    private val isRedirectUriRegistered: Boolean
-        private get() {
+    private fun isRedirectUriRegistered(context: Context): Boolean {
             // ensure that the redirect URI declared in the configuration is handled by some activity
             // in the app, by querying the package manager speculatively
             val redirectIntent = Intent()
-            redirectIntent.setPackage(mContext.packageName)
+            redirectIntent.setPackage(context.packageName)
             redirectIntent.action = Intent.ACTION_VIEW
             redirectIntent.addCategory(Intent.CATEGORY_BROWSABLE)
             redirectIntent.data = mRedirectUri
-            return mContext.packageManager.queryIntentActivities(redirectIntent, 0).isNotEmpty()
+            return context.packageManager.queryIntentActivities(redirectIntent, 0).isNotEmpty()
         }
 
     class InvalidConfigurationException : Exception {
@@ -212,11 +263,12 @@ class Configuration(private val mContext: Context) {
         internal constructor(reason: String?, cause: Throwable?) : super(reason, cause) {}
     }
 
-    companion object {
-        private val TAG = "Configuration"
-        private val PREFS_NAME = "config"
-        private val KEY_LAST_HASH = "lastHash"
-        private var sInstance = WeakReference<Configuration?>(null)
+    companion object  : SingletonHolder<Configuration, Context>(::Configuration) {
+        private const val TAG = "Configuration"
+        private const val PREFS_NAME = "config"
+        private const val KEY_LAST_HASH = "lastHash"
+
+/*
         fun getInstance(context: Context): Configuration {
             var config = sInstance.get()
             if (config == null) {
@@ -225,13 +277,6 @@ class Configuration(private val mContext: Context) {
             }
             return config
         }
-    }
-
-    init {
-        try {
-            readConfiguration()
-        } catch (ex: InvalidConfigurationException) {
-            configurationError = ex.message
-        }
+*/
     }
 }

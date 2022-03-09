@@ -14,7 +14,7 @@ class SelectGameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mAuthStateManager = AuthStateManager.getInstance(this)
-        val mConfiguration = Configuration.getInstance(this)
+//        val mConfiguration = Configuration.getInstance(this)
 
         if (mAuthStateManager.current.isAuthorized) {
             val mainButton: Button = findViewById(R.id.main_button)
