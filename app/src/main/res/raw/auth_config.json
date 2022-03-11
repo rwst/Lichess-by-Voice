@@ -1,7 +1,7 @@
 {
   "client_id": "lichessbyvoice.de",
-  "redirect_uri": "de.lichessbyvoice:/oauth2redirect",
-  "end_session_redirect_uri": "de.lichessbyvoice:/oauth2redirect",
+  "redirect_uri": "de.lichessbyvoice://oauth",
+  "end_session_redirect_uri": "de.lichessbyvoice://oauth",
   "authorization_scope": "web:login",
   "discovery_uri": "",
   "authorization_endpoint_uri": "https://lichess.org/oauth",

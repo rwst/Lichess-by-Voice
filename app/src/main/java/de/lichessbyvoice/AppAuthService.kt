@@ -33,8 +33,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
 
 class AppAuthService private constructor(context: Context) {
-    private val mAuthStateManager = AuthStateManager.getInstance(context)
-    private val mConfiguration = Configuration.getInstance(context)
     private val mClientId = AtomicReference<String>()
     private val mAuthRequest = AtomicReference<AuthorizationRequest>()
     private val mAuthIntent = AtomicReference<CustomTabsIntent>()
@@ -45,9 +43,11 @@ class AppAuthService private constructor(context: Context) {
     private val completionIntent = Intent(context, SelectGameActivity::class.java)
     private val cancelIntent = Intent(context, AuthFailedActivity::class.java)
     private val pflags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-        PendingIntent.FLAG_MUTABLE else 0
+        PendingIntent.FLAG_MUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
     private val pcompl = PendingIntent.getActivity(context, 0, completionIntent, pflags)
     private val pcancel = PendingIntent.getActivity(context, 0, cancelIntent, pflags)
+    private val mAuthStateManager = AuthStateManager.getInstance(context)
+    private val mConfiguration = Configuration.getInstance(context)
     private var mAuthService: AuthorizationService = createAuthorizationService(context)
 
     init {
@@ -110,7 +110,6 @@ class AppAuthService private constructor(context: Context) {
             Log.i(TAG,"Failed to dynamically register client",
                 ex
             )
-            //displayErrorLater("Failed to register client: " + ex.message, true)
             return
         }
         Log.i(TAG,"Dynamically registered client: " + response.clientId)
@@ -123,6 +122,7 @@ class AppAuthService private constructor(context: Context) {
      * configuration.
      */
     private fun initializeClient() {
+        Log.i(TAG, "initializeClient()")
         if (mConfiguration.getClientId() != null) {
             Log.i(TAG,"Using static client ID: " + mConfiguration.getClientId()
             )
@@ -195,6 +195,10 @@ class AppAuthService private constructor(context: Context) {
         // from the static configuration values.
         if (mConfiguration.getDiscoveryUri() == null) {
             Log.i(TAG,"Creating auth config from res/raw/auth_config.json")
+            Log.i(TAG,"getAuthEndpointUri: " + mConfiguration.getAuthEndpointUri())
+            Log.i(TAG,"getTokenEndpointUri: " + mConfiguration.getTokenEndpointUri())
+            Log.i(TAG,"getRegistrationEndpointUri: " + mConfiguration.getRegistrationEndpointUri())
+            Log.i(TAG,"getEndSessionEndpoint: " + mConfiguration.getEndSessionEndpoint())
 
             val config = AuthorizationServiceConfiguration(
                 mConfiguration.getAuthEndpointUri(),
@@ -202,6 +206,7 @@ class AppAuthService private constructor(context: Context) {
                 mConfiguration.getRegistrationEndpointUri(),
                 mConfiguration.getEndSessionEndpoint()
             )
+            Log.i(TAG, "config: " + config.toJsonString())
 
             mAuthStateManager.replace(AuthState(config))
             initializeClient()
@@ -244,6 +249,7 @@ class AppAuthService private constructor(context: Context) {
 
     @WorkerThread
     private fun doAuth() {
+        Log.i(TAG, "doAuth")
         try {
             mAuthIntentLatch.await()
         } catch (ex: InterruptedException) {
@@ -252,18 +258,36 @@ class AppAuthService private constructor(context: Context) {
                 "Interrupted while waiting for auth intent"
             )
         }
-        cancelIntent.putExtra(AuthFailedActivity.EXTRA_FAILED, true)
-        cancelIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        mAuthService.performAuthorizationRequest(
-            mAuthRequest.get(),
-            pcompl,
-            pcancel,
-            mAuthIntent.get()
-        )
+        if (mUsePendingIntents) {
+            cancelIntent.putExtra(AuthFailedActivity.EXTRA_FAILED, true)
+            cancelIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            Log.i(TAG, "call performAuthorizationRequest: $pcompl, $pcancel")
+            mAuthService.performAuthorizationRequest(
+                mAuthRequest.get(),
+                pcompl,
+                pcancel,
+                mAuthIntent.get()
+            )
+        }
+        else
+        {
+            val intent = mAuthService.getAuthorizationRequestIntent(
+                mAuthRequest.get(),
+                mAuthIntent.get()
+            )
+        }
+    }
+
+    fun performTokenRequest(
+        createTokenExchangeRequest: TokenRequest,
+        tokenResponseCallback: AuthorizationService.TokenResponseCallback
+    ) {
+        mAuthService.performTokenRequest(createTokenExchangeRequest, tokenResponseCallback)
     }
 
     companion object : SingletonHolder<AppAuthService, Context>(::AppAuthService) {
         private const val TAG = "AppAuthService"
+        private const val mUsePendingIntents = true
     }
 /*        val serviceConfig = AuthorizationServiceConfiguration(
             Uri.parse("https://lichess.org/oauth"), // authorization endpoint

@@ -135,9 +135,7 @@ class Configuration private constructor(context: Context) {
             tokenEndpointUri = getRequiredConfigWebUri("token_endpoint_uri")
             userInfoEndpointUri = getRequiredConfigWebUri("user_info_endpoint_uri")
             endSessionEndpoint = getRequiredConfigUri("end_session_endpoint")
-            if (clientId == null) {
-                registrationEndpointUri = getRequiredConfigWebUri("registration_endpoint_uri")
-            }
+            registrationEndpointUri = getRequiredConfigWebUri("registration_endpoint_uri")
         } else {
             discoveryUri = getRequiredConfigWebUri("discovery_uri")
         }

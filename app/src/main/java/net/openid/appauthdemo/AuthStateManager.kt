@@ -50,6 +50,12 @@ class AuthStateManager private constructor(context: Context) {
         }
 
     @AnyThread
+    public fun isAuthorized(): Boolean {
+        return current.authorizationException == null &&
+        current.accessToken != null
+    }
+
+    @AnyThread
     fun replace(state: AuthState): AuthState {
         writeState(state)
         mCurrentAuthState.set(state)

@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId "de.lichessbyvoice"
-        minSdk 29
-        targetSdk 30
+        minSdk 23
+        targetSdk 29
         versionCode 1
         versionName "1.0"
 
@@ -17,8 +17,13 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            debuggable true
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -29,8 +34,12 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    defaultConfig {
+        manifestPlaceholders = [
+                appAuthRedirectScheme: 'de.lichessbyvoice'
+        ]
+    }
 }
-
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'

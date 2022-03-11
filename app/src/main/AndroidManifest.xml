@@ -24,11 +24,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AuthFailedActivity">
+            android:name=".AuthFailedActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="net.openid.appauth.HANDLE_AUTHORIZATION_RESPONSE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
-            tools:node="replace"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -36,7 +40,14 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
                     android:host="lichessbyvoice.de"
-                    android:path="/oauth2redirect"/>
+                    android:pathPrefix="/"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="de.lichessbyvoice"
+                    android:pathPrefix="/"/>
             </intent-filter>
         </activity>
     </application>
