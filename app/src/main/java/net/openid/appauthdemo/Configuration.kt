@@ -18,10 +18,10 @@ package net.openid.appauthdemo
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Resources
 import android.net.Uri
 import android.text.TextUtils
+import android.util.Log
 import de.lichessbyvoice.R
 import de.lichessbyvoice.SingletonHolder
 import net.openid.appauth.connectivity.ConnectionBuilder
@@ -40,8 +40,6 @@ import java.nio.charset.Charset
  * configuration. When a configuration change is detected, the app state is reset.
  */
 class Configuration private constructor(context: Context) {
-    private val mPrefs: SharedPreferences =
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val mResources: Resources = context.resources
     private var mConfigJson: JSONObject? = null
     private var mConfigHash: String? = null
@@ -64,17 +62,11 @@ class Configuration private constructor(context: Context) {
 
     init {
         try {
+            Log.i(TAG, "Configuration.init()")
             readConfiguration(context)
-        } catch (ex: Configuration.InvalidConfigurationException) {
+        } catch (ex: InvalidConfigurationException) {
             configurationError = ex.message
         }
-    }
-    /**
-     * Indicates whether the configuration has changed from the last known valid state.
-     */
-    fun hasConfigurationChanged(): Boolean {
-        val lastHash = lastKnownConfigHash
-        return mConfigHash != lastHash
     }
 
     /**
@@ -83,22 +75,12 @@ class Configuration private constructor(context: Context) {
     val isValid: Boolean
         get() = configurationError == null
 
-    /**
-     * Indicates that the current configuration should be accepted as the "last known valid"
-     * configuration.
-     */
-    fun acceptConfiguration() {
-        mPrefs.edit().putString(KEY_LAST_HASH, mConfigHash).apply()
-    }
-
     val scope: String
         get() = (mScope)!!
     val connectionBuilder: ConnectionBuilder
         get() {
             return DefaultConnectionBuilder.INSTANCE
         }
-    private val lastKnownConfigHash: String?
-        get() = mPrefs.getString(KEY_LAST_HASH, null)
 
     @Throws(InvalidConfigurationException::class)
     private fun readConfiguration(context: Context) {
@@ -161,10 +143,6 @@ class Configuration private constructor(context: Context) {
         return discoveryUri
     }
 
-    fun getEndSessionRedirectUri(): Uri? {
-        return endSessionRedirectUri
-    }
-
     fun getAuthEndpointUri(): Uri {
         return authEndpointUri
     }
@@ -179,14 +157,6 @@ class Configuration private constructor(context: Context) {
 
     fun getRegistrationEndpointUri(): Uri {
         return registrationEndpointUri
-    }
-
-    fun getUserInfoEndpointUri(): Uri? {
-        return userInfoEndpointUri
-    }
-
-    fun isHttpsRequired(): Boolean {
-        return isHttpsRequired
     }
 
     private fun getConfigString(propName: String?): String? {
@@ -257,24 +227,11 @@ class Configuration private constructor(context: Context) {
         }
 
     class InvalidConfigurationException : Exception {
-        internal constructor(reason: String?) : super(reason) {}
-        internal constructor(reason: String?, cause: Throwable?) : super(reason, cause) {}
+        internal constructor(reason: String?) : super(reason)
+        internal constructor(reason: String?, cause: Throwable?) : super(reason, cause)
     }
 
     companion object  : SingletonHolder<Configuration, Context>(::Configuration) {
         private const val TAG = "Configuration"
-        private const val PREFS_NAME = "config"
-        private const val KEY_LAST_HASH = "lastHash"
-
-/*
-        fun getInstance(context: Context): Configuration {
-            var config = sInstance.get()
-            if (config == null) {
-                config = Configuration(context)
-                sInstance = WeakReference(config)
-            }
-            return config
-        }
-*/
     }
 }

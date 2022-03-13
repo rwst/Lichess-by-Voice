@@ -50,7 +50,7 @@ class AuthStateManager private constructor(context: Context) {
         }
 
     @AnyThread
-    public fun isAuthorized(): Boolean {
+    fun isAuthorized(): Boolean {
         return current.authorizationException == null &&
         current.accessToken != null
     }

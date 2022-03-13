@@ -271,10 +271,7 @@ class AppAuthService private constructor(context: Context) {
         }
         else
         {
-            val intent = mAuthService.getAuthorizationRequestIntent(
-                mAuthRequest.get(),
-                mAuthIntent.get()
-            )
+            throw RuntimeException("not implemented")
         }
     }
 

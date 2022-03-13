@@ -24,7 +24,15 @@ class SelectGameActivity : AppCompatActivity() {
         setContentView(R.layout.selectgame_activity)
 
         if (intent.action == "android.intent.action.MAIN") {
-            proceedIfToken()
+            if (mAuthStateManager.isAuthorized()) {
+                val mainButton: Button = findViewById(R.id.main_button)
+                mainButton.setOnClickListener { gameView() }
+            } else {
+                Log.i(TAG, "authorization missing")
+                val intent = Intent(this, AuthFailedActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+            }
         }
         else {
             val resp = AuthorizationResponse.fromIntent(intent)
@@ -34,38 +42,27 @@ class SelectGameActivity : AppCompatActivity() {
                 appAuthService.performTokenRequest(
                     resp.createTokenExchangeRequest()
                 ) { theResp, theEx ->
+                    mAuthStateManager.updateAfterTokenResponse(theResp, theEx)
                     if (theResp != null) {
                         // exchange succeeded
                         Log.i(TAG, "token exchange succeeded: $theResp")
-                        mAuthStateManager.updateAfterTokenResponse(theResp, theEx)
+                        val intent = Intent(this, SelectGameActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
                     } else {
                         Log.i(TAG, "token exchange failed: $theEx")
                     }
+
                 }
             }
         }
     }
 
-    private fun proceedIfToken() {
-        if (mAuthStateManager.isAuthorized()) {
-            val mainButton: Button = findViewById(R.id.main_button)
-            mainButton.setOnClickListener { gameView() }
-        } else {
-            Log.i(TAG, "authorization missing")
-            val intent = Intent(this, AuthFailedActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        Log.i(TAG, "onNewIntent")
-        super.onNewIntent(intent)
-    }
-
-    override fun onResume() {
-        Log.i(TAG, "onResume")
-        super.onResume()
-        proceedIfToken()
+    override fun onBackPressed() {
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
     private fun gameView() {
