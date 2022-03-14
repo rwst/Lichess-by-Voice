@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Lichess by Voice</string>
     <string name="main_button">New Game</string>
+    <string name="lastgame_button">Continue Suspended Game</string>
     <string name="account_button">Create/Link Account</string>
     <string name="no_token">Lichess access token not available in app. Please link your Lichess account or create a new one.</string>
 </resources>
