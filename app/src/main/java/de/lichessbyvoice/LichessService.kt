@@ -2,8 +2,6 @@ package de.lichessbyvoice
 
 import android.content.Context
 import java.lang.RuntimeException
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 
 class LichessService private constructor(context: Context) {
     private lateinit var theToken: String
@@ -11,21 +9,18 @@ class LichessService private constructor(context: Context) {
         theToken = token ?: throw RuntimeException("null token")
     }
 
-    @Serializable
-    data class user (
+    data class User (
         val id: String,
         val rating: Int,
         val username: String
         )
 
-    @Serializable
-    data class variantType (
+    data class VariantType (
         val key: String,
         val name: String
     )
 
-    @Serializable
-    data class gameData (
+    data class GameData (
         val gameId: String,
         val fullId: String,
         val color: String,
@@ -33,13 +28,13 @@ class LichessService private constructor(context: Context) {
         val hasMoved: Boolean,
         val isMyTurn: Boolean,
         val lastMove: String,
-        val opponent: user,
+        val opponent: User,
         val perf: String,
         val rated: Boolean,
         val secondsLeft: Int,
         val source: String,
         val speed: String,
-        val variant: variantType,
+        val variant: VariantType,
     )
 
     fun getLastSuspendedGameCode(): String? {
