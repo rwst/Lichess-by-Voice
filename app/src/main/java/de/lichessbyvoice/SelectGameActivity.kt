@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauthdemo.AuthStateManager
@@ -15,28 +17,33 @@ import net.openid.appauthdemo.AuthStateManager
 class SelectGameActivity : AppCompatActivity() {
     private lateinit var mAuthStateManager: AuthStateManager
     private lateinit var appAuthService: AppAuthService
-    private lateinit var lichess: LichessService
+    private var currentGameCode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mAuthStateManager = AuthStateManager.getInstance(this)
         appAuthService = AppAuthService.getInstance(this)
-        lichess = LichessService.getInstance(this)
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.selectgame_activity)
+        val newGameButton: Button = findViewById(R.id.newgame_button)
+        val lastGameButton: Button = findViewById(R.id.lastgame_button)
+        lastGameButton.isEnabled = false
+        ProgressIndicator.setShowFunc { showProgress() }
+        ProgressIndicator.setHideFunc { hideProgress() }
+        hideProgress()
 
         val resp = AuthorizationResponse.fromIntent(intent)
         val ex = AuthorizationException.fromIntent(intent)
         if (resp == null) {
             // the activity is opened normally
             if (mAuthStateManager.isAuthorized()) {
-                lichess.setToken(mAuthStateManager.current.accessToken)
-                val newGameButton: Button = findViewById(R.id.newgame_button)
+                LichessService.setToken(mAuthStateManager.current.accessToken)
                 newGameButton.setOnClickListener { newGame() }
-                val lastGameButton: Button = findViewById(R.id.lastgame_button)
                 lastGameButton.setOnClickListener { lastGame() }
-                val code: String? = lichess.getLastSuspendedGameCode()
-                lastGameButton.isEnabled = (code != null)
+                val model: ActiveGamesViewModel by viewModels()
+                model.getGames().observe(this) { games ->
+                    lastGameButton.isEnabled = games != null && games.isNotEmpty()
+                }
             } else {
                 Log.i(TAG, "authorization missing")
                 val intent = Intent(this, AuthFailedActivity::class.java)
@@ -71,10 +78,21 @@ class SelectGameActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun showProgress() {
+        val spinner: ProgressBar = findViewById(R.id.progressBar)
+        spinner.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress() {
+        val spinner: ProgressBar = findViewById(R.id.progressBar)
+        spinner.visibility = View.GONE
+    }
+
     private fun newGame() {
     }
 
     private fun lastGame() {
+        currentGameCode?.let { gameView(it) }
     }
 
     private fun gameView(gameCode: String) {
@@ -83,6 +101,7 @@ class SelectGameActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW, gameUrl)
         v.context.startActivity(intent)
     }
+
     companion object {
         private const val TAG = "SelectGameActivity"
     }

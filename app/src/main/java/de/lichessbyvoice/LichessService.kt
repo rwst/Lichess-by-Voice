@@ -1,12 +1,28 @@
 package de.lichessbyvoice
 
-import android.content.Context
+import android.util.Log
 import java.lang.RuntimeException
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.GET
+import retrofit2.converter.gson.GsonConverterFactory
 
-class LichessService private constructor(context: Context) {
+object LichessService {
+    private const val TAG = "LichessService"
     private lateinit var theToken: String
     fun setToken(token: String?) {
         theToken = token ?: throw RuntimeException("null token")
+    }
+
+    object RetrofitHelper {
+
+        private const val baseUrl = "https://lichess.org/api/"
+
+        fun getInstance(): Retrofit {
+            return Retrofit.Builder().baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
     }
 
     data class User (
@@ -37,11 +53,19 @@ class LichessService private constructor(context: Context) {
         val variant: VariantType,
     )
 
-    fun getLastSuspendedGameCode(): String? {
-        return null
+    interface AccountPlayingApi {
+        @GET("/account/playing")
+        suspend fun getAccountPlaying() : Response<List<GameData>>
     }
 
-    companion object : SingletonHolder<LichessService, Context>(::LichessService) {
-        private const val TAG = "LichessService"
+    suspend fun getSuspendedGames(): List<GameData>? {
+        val accountPlayingApi = RetrofitHelper.getInstance().create(AccountPlayingApi::class.java)
+        val result = accountPlayingApi.getAccountPlaying()
+        if (result.isSuccessful) {
+            Log.i(TAG, result.body().toString())
+            return result.body()
+        }
+        Log.i(TAG, result.errorBody().toString())
+        return null
     }
 }
