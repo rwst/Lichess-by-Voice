@@ -21,7 +21,6 @@ object LichessService {
     object RetrofitHelper {
 
         private const val baseUrl = "https://lichess.org/"
-        // private const val baseUrl = "https://ptsv2.com/"
         private var logging = HttpLoggingInterceptor()
 
         fun getInstance(): Retrofit {
@@ -63,13 +62,10 @@ object LichessService {
         val variant: VariantType,
     )
 
-    data class GameData(var nowPlaying: List<GameDataEntry> = emptyList()) {
-//        val nowPlaying: List<GameDataEntry> = TODO()
-    }
+    data class GameData(var nowPlaying: List<GameDataEntry> = emptyList())
 
     interface AccountPlayingApi {
         @GET("/api/account/playing")
-//        @GET("t/yrq59-1647616889/post")
         suspend fun getAccountPlaying(@Header("Authorization") token: String ) : Response<GameData>
     }
 
