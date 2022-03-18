@@ -1,11 +1,15 @@
 package de.lichessbyvoice
 
 import android.util.Log
-import java.lang.RuntimeException
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.http.GET
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Header
+
 
 object LichessService {
     private const val TAG = "LichessService"
@@ -16,11 +20,17 @@ object LichessService {
 
     object RetrofitHelper {
 
-        private const val baseUrl = "https://lichess.org/api/"
+        private const val baseUrl = "https://lichess.org/"
+        // private const val baseUrl = "https://ptsv2.com/"
+        private var logging = HttpLoggingInterceptor()
 
         fun getInstance(): Retrofit {
+            logging.level = Level.BODY
+            val httpClient = OkHttpClient.Builder()
+            httpClient.addInterceptor(logging)
             return Retrofit.Builder().baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build())
                 .build()
         }
     }
@@ -36,7 +46,7 @@ object LichessService {
         val name: String
     )
 
-    data class GameData (
+    data class GameDataEntry (
         val gameId: String,
         val fullId: String,
         val color: String,
@@ -53,19 +63,24 @@ object LichessService {
         val variant: VariantType,
     )
 
-    interface AccountPlayingApi {
-        @GET("/account/playing")
-        suspend fun getAccountPlaying() : Response<List<GameData>>
+    data class GameData(var nowPlaying: List<GameDataEntry> = emptyList()) {
+//        val nowPlaying: List<GameDataEntry> = TODO()
     }
 
-    suspend fun getSuspendedGames(): List<GameData>? {
+    interface AccountPlayingApi {
+        @GET("/api/account/playing")
+//        @GET("t/yrq59-1647616889/post")
+        suspend fun getAccountPlaying(@Header("Authorization") token: String ) : Response<GameData>
+    }
+
+    suspend fun getSuspendedGames(): GameData? {
         val accountPlayingApi = RetrofitHelper.getInstance().create(AccountPlayingApi::class.java)
-        val result = accountPlayingApi.getAccountPlaying()
+        val result = accountPlayingApi.getAccountPlaying("Bearer $theToken")
         if (result.isSuccessful) {
             Log.i(TAG, result.body().toString())
             return result.body()
         }
-        Log.i(TAG, result.errorBody().toString())
+        Log.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         return null
     }
 }

@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class ActiveGamesViewModel : ViewModel() {
-    private val games: MutableLiveData<List<LichessService.GameData>> by lazy {
-        MutableLiveData<List<LichessService.GameData>>().also {
+    private val games: MutableLiveData<LichessService.GameData?> by lazy {
+        MutableLiveData<LichessService.GameData?>().also {
             viewModelScope.launch {
                 ProgressIndicator.showProgress?.let { it() }
                 it.value = LichessService.getSuspendedGames()
@@ -17,7 +17,7 @@ class ActiveGamesViewModel : ViewModel() {
         }
     }
 
-    fun getGames(): LiveData<List<LichessService.GameData>> {
+    fun getGames(): LiveData<LichessService.GameData?> {
         return games
     }
 }

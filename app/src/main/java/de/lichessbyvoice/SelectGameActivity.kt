@@ -42,7 +42,7 @@ class SelectGameActivity : AppCompatActivity() {
                 lastGameButton.setOnClickListener { lastGame() }
                 val model: ActiveGamesViewModel by viewModels()
                 model.getGames().observe(this) { games ->
-                    lastGameButton.isEnabled = games != null && games.isNotEmpty()
+                    lastGameButton.isEnabled = games != null && games.nowPlaying.isNotEmpty()
                 }
             } else {
                 Log.i(TAG, "authorization missing")
