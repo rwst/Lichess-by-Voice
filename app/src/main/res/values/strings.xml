@@ -4,4 +4,19 @@
     <string name="lastgame_button">Continue Suspended Game</string>
     <string name="account_button">Create/Link Account</string>
     <string name="no_token">Lichess access token not available in app. Please link your Lichess account or create a new one.</string>
+    <string name="newgame_title">Play with the computer</string>
+    <string name="newgame_variant">Standard</string>
+    <string name="newgame_variant2">Chess960</string>
+    <string name="newgame_color_white">white</string>
+    <string name="newgame_color_black">black</string>
+    <string name="newgame_color_random">random color</string>
+    <string name="newgame_strength_1">1</string>
+    <string name="newgame_strength_2">2</string>
+    <string name="newgame_strength_3">3</string>
+    <string name="newgame_strength_4">4</string>
+    <string name="newgame_strength_5">5</string>
+    <string name="newgame_strength_6">6</string>
+    <string name="newgame_strength_7">7</string>
+    <string name="newgame_strength_8">8</string>
+    <string name="newgame_text_strength">Strength</string>
 </resources>
