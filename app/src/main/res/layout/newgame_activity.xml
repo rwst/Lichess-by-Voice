@@ -20,15 +20,17 @@
         android:id="@+id/newgame_constraint1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newgame_title">
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/newgame_variant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
             android:layout_marginStart="32dp"
             android:switchPadding="48dp"
             android:text="@string/newgame_variant"
@@ -41,7 +43,7 @@
             android:id="@+id/newgame_variant2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="16dp"
             android:text="@string/newgame_variant2"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -51,8 +53,8 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/newgame_constraint2"
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/newgame_radio_strength"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -60,105 +62,109 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newgame_constraint1"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:checkedButton="@+id/button1"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        style="?attr/materialButtonToggleGroupStyle">
 
         <Button
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="parent"
             android:text="@string/newgame_strength_1"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button1"
             android:text="@string/newgame_strength_2"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
         <Button
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button2"
             android:text="@string/newgame_strength_3"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
         <Button
             android:id="@+id/button4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button3"
             android:text="@string/newgame_strength_4"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
         <Button
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button4"
             android:text="@string/newgame_strength_5"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
         <Button
             android:id="@+id/button6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button5"
             android:text="@string/newgame_strength_6"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
         <Button
             android:id="@+id/button7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button6"
             android:text="@string/newgame_strength_7"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
         <Button
             android:id="@+id/button8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:minWidth="32dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button7"
             android:text="@string/newgame_strength_8"
-            style="?android:attr/buttonBarButtonStyle" />
+            style="?attr/materialButtonOutlinedStyle" />
 
-    </LinearLayout>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView
         android:id="@+id/newgame_text_strength"
@@ -167,16 +173,25 @@
         android:text="@string/newgame_text_strength"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newgame_constraint2"/>
+        app:layout_constraintTop_toBottomOf="@+id/newgame_radio_strength"/>
+
+    <TextView
+        android:id="@+id/newgame_text_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/newgame_text_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newgame_text_strength" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/newgame_constraint3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newgame_text_strength">
+        app:layout_constraintTop_toBottomOf="@+id/newgame_text_start">
 
         <Button
             android:id="@+id/newgame_color_white"

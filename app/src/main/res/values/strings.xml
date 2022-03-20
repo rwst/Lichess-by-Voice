@@ -19,4 +19,5 @@
     <string name="newgame_strength_7">7</string>
     <string name="newgame_strength_8">8</string>
     <string name="newgame_text_strength">Strength</string>
+    <string name="newgame_text_start">Start game with</string>
 </resources>

@@ -96,6 +96,8 @@ class SelectGameActivity : AppCompatActivity() {
     }
 
     private fun newGame() {
+        val intent = Intent(this, NewGameActivity::class.java)
+        startActivity(intent)
     }
 
     private fun lastGame() {
