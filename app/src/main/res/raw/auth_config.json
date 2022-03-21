@@ -2,7 +2,7 @@
   "client_id": "lichessbyvoice.de",
   "redirect_uri": "de.lichessbyvoice://oauth",
   "end_session_redirect_uri": "de.lichessbyvoice://oauth",
-  "authorization_scope": "web:login",
+  "authorization_scope": "challenge:write board:play",
   "discovery_uri": "",
   "authorization_endpoint_uri": "https://lichess.org/oauth",
   "token_endpoint_uri": "https://lichess.org/api/token",

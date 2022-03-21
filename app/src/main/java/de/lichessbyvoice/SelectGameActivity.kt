@@ -1,7 +1,6 @@
 package de.lichessbyvoice
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -86,12 +85,12 @@ class SelectGameActivity : AppCompatActivity() {
     }
 
     private fun showProgress() {
-        val spinner: ProgressBar = findViewById(R.id.progressBar)
+        val spinner: ProgressBar = findViewById(R.id.selectGame_progressBar)
         spinner.visibility = View.VISIBLE
     }
 
     private fun hideProgress() {
-        val spinner: ProgressBar = findViewById(R.id.progressBar)
+        val spinner: ProgressBar = findViewById(R.id.selectGame_progressBar)
         spinner.visibility = View.GONE
     }
 
@@ -101,14 +100,7 @@ class SelectGameActivity : AppCompatActivity() {
     }
 
     private fun lastGame() {
-        currentGameCode?.let { gameView(it) }
-    }
-
-    private fun gameView(gameCode: String) {
-        val gameUrl: Uri = Uri.parse("https://lichess.org/$gameCode")
-        val v: View = findViewById(R.id.main)
-        val intent = Intent(Intent.ACTION_VIEW, gameUrl)
-        v.context.startActivity(intent)
+        currentGameCode?.let { LichessService.gameView(findViewById(R.id.main), it) }
     }
 
     companion object {

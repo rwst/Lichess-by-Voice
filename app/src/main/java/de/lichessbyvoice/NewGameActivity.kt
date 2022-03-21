@@ -2,20 +2,19 @@ package de.lichessbyvoice
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.forEach
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import kotlinx.coroutines.*
 
 class NewGameActivity : AppCompatActivity() {
-    data class GameParams (
-        var level: Int,
-        var color: String,
-        var variant: String
-    )
-    private var theGameParams = GameParams(1, "random", "standard")
+    private var theGameParams = LichessService.AiGameParams(1, "random", "standard")
 
     private val buttons: IntArray = intArrayOf(
         R.id.button1,
@@ -49,11 +48,38 @@ class NewGameActivity : AppCompatActivity() {
         startRandom.setOnClickListener { go("random") }
         val startBlack: Button = findViewById(R.id.newgame_color_black)
         startBlack.setOnClickListener { go("black") }
+        ProgressIndicator.setShowFunc { showProgress() }
+        ProgressIndicator.setHideFunc { hideProgress() }
+        hideProgress()
     }
 
     private fun go(color: String) {
         theGameParams.color = color
         Log.i(TAG, "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}")
+        val model: NewGameViewModel by viewModels()
+        runBlocking {
+            LichessService.aiGameParamChannel.send(theGameParams)
+        }
+        model.getGame().observe(this) { newGame ->
+            if (newGame != null) {
+                LichessService.gameView(findViewById(R.id.main), newGame.gameId)
+                Log.i(TAG, "showing game ${newGame.gameId}")
+            }
+            else
+            {
+                Log.e(TAG, "create game failed")
+            }
+        }
+    }
+
+    private fun showProgress() {
+        val spinner: ProgressBar = findViewById(R.id.newGame_progressBar)
+        spinner.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress() {
+        val spinner: ProgressBar = findViewById(R.id.newGame_progressBar)
+        spinner.visibility = View.GONE
     }
 
     companion object {

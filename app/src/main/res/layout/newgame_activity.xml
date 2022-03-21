@@ -25,19 +25,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newgame_title">
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/newgame_variant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="48dp"
             android:minHeight="48dp"
             android:layout_marginStart="32dp"
-            android:switchPadding="48dp"
+            app:switchPadding="24dp"
             android:text="@string/newgame_variant"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/Widget.Material3.CompoundButton.Switch"/>
 
         <TextView
             android:id="@+id/newgame_variant2"
@@ -63,7 +64,6 @@
         app:layout_constraintTop_toBottomOf="@+id/newgame_constraint1"
         android:gravity="center"
         android:orientation="horizontal"
-        android:checkedButton="@+id/button1"
         app:singleSelection="true"
         app:selectionRequired="true"
         style="?attr/materialButtonToggleGroupStyle">
@@ -222,5 +222,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/newGame_progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newgame_constraint3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
