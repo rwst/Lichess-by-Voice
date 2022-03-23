@@ -8,10 +8,9 @@ import kotlinx.coroutines.channels.Channel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.*
 import retrofit2.http.*
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 object LichessService {
@@ -20,7 +19,8 @@ object LichessService {
     fun setToken(token: String?) {
         theToken = token ?: throw RuntimeException("null token")
     }
-    var aiGameParamChannel = Channel<AiGameParams>()
+    val aiGameParamChannel = Channel<AiGameParams>()
+    val newGameDataChannel = Channel<GameDataEntry?>()
 
     object RetrofitHelper {
 
@@ -39,42 +39,43 @@ object LichessService {
     }
 
     data class User (
-        val id: String,
-        val rating: Int,
-        val username: String
+        val id: String = "",
+        val rating: Int = 0,
+        val username: String = ""
         )
 
     data class VariantType (
-        val key: String,
-        val name: String,
-        val short: String
+        val key: String = "",
+        val name: String = "",
+        val short: String = ""
     )
 
     data class StatusType (
-        val id: Int,
-        val name: String
+        val id: Int = 0,
+        val name: String = ""
     )
 
     data class GameDataEntry (
-        val gameId: String,
-        val fullId: String,
-        val color: String,
-        val fen: String,
-        val hasMoved: Boolean,
-        val isMyTurn: Boolean,
-        val lastMove: String,
-        val opponent: User,
-        val perf: String,
-        val rated: Boolean,
-        val secondsLeft: Int,
-        val source: String,
-        val speed: String,
-        val variant: VariantType,
-        val player: String,
-        val turns: Int,
-        val startedAtTurn: Int,
-        val status: StatusType,
-        val createdAt: Long,
+        val id: String = "",
+        val gameId: String = "",
+        val fullId: String = "",
+        val color: String = "",
+        val fen: String = "",
+        val hasMoved: Boolean = false,
+        val isMyTurn: Boolean = false,
+        val lastMove: String = "",
+        val opponent: User = User(),
+        val perf: String = "",
+        val rated: Boolean = false,
+        val secondsLeft: Int = 0,
+        val source: String = "",
+        val speed: String = "",
+        val variant: VariantType = VariantType(),
+        val player: String = "",
+        val turns: Int = 0,
+        val startedAtTurn: Int = 0,
+        val status: StatusType = StatusType(),
+        val createdAt: Long = 0,
    )
 
     data class AiGameParams (
@@ -92,13 +93,9 @@ object LichessService {
     }
 
     interface ChallengeAiApi {
-        suspend fun postChallengeAi(token: String, params: AiGameParams) : Response<GameDataEntry> {
-            return postChallengeAiHelper(token, params.level, params.variant, params.color)
-        }
-
         @FormUrlEncoded
         @POST("/api/challenge/ai")
-        suspend fun postChallengeAiHelper(
+        suspend fun postChallengeAi(
             @Header("Authorization") token: String,
             @Field("level") level: Int,
             @Field("variant") variant: String,
@@ -119,13 +116,21 @@ object LichessService {
 
     suspend fun postChallengeAi(params: AiGameParams): GameDataEntry? {
         val challengeAiApi = RetrofitHelper.getInstance().create(ChallengeAiApi::class.java)
-        val result = challengeAiApi.postChallengeAi("Bearer $theToken", params)
+        val result = challengeAiApi.postChallengeAi("Bearer $theToken",
+            params.level,
+            params.variant,
+            params.color)
         if (result.isSuccessful) {
             Log.i(TAG, result.body().toString())
             return result.body()
         }
         Log.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         return null
+    }
+
+    suspend fun mockChallengeAi(): GameDataEntry {
+        Log.i(TAG, "mockChallengeAi()")
+        return GameDataEntry(id = "JsVm8oTX")
     }
 
     fun gameView(view: View, gameCode: String) {

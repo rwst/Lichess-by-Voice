@@ -56,14 +56,15 @@ class NewGameActivity : AppCompatActivity() {
     private fun go(color: String) {
         theGameParams.color = color
         Log.i(TAG, "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}")
+        val mainView = findViewById<View>(R.id.main)
         val model: NewGameViewModel by viewModels()
+        model.getGame().observe(this) { }
         runBlocking {
             LichessService.aiGameParamChannel.send(theGameParams)
-        }
-        model.getGame().observe(this) { newGame ->
+            val newGame = LichessService.newGameDataChannel.receive()
             if (newGame != null) {
-                LichessService.gameView(findViewById(R.id.main), newGame.gameId)
-                Log.i(TAG, "showing game ${newGame.gameId}")
+                LichessService.gameView(mainView, newGame.id)
+                Log.i(TAG, "showing game ${newGame.id}")
             }
             else
             {
