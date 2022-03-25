@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Lichess by Voice"
 include ':app'
+include ':models'

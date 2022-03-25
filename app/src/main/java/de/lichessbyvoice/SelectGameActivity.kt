@@ -6,8 +6,11 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauthdemo.AuthStateManager
@@ -17,6 +20,11 @@ class SelectGameActivity : AppCompatActivity() {
     private lateinit var mAuthStateManager: AuthStateManager
     private lateinit var appAuthService: AppAuthService
     private var currentGameCode: String? = null
+    private val srService = SpeechRecognitionService()
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) {
+        srService.destroy()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mAuthStateManager = AuthStateManager.getInstance(this)
@@ -100,7 +108,20 @@ class SelectGameActivity : AppCompatActivity() {
     }
 
     private fun lastGame() {
-        currentGameCode?.let { LichessService.gameView(findViewById(R.id.main), it) }
+        if (currentGameCode != null) {
+            srService.initModel(this)
+            runBlocking {
+                LichessService.gameView(launcher, currentGameCode!!)
+                srService.recognizeMicrophone()
+                launch {
+                    while(true) {
+                        val move = TextFilter.getPossibleMove(srService) ?: break
+                        if (move.isLegal())
+                            LichessService.performMove(currentGameCode!!, move)
+                    }
+                }
+            }
+        }
     }
 
     companion object {

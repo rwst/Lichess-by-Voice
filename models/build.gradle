@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 31
+    }
+    buildFeatures {
+        buildConfig = false
+    }
+    sourceSets {
+        main {
+            assets.srcDirs += "$buildDir/generated/assets"
+        }
+    }
+}
+
+tasks.register('genUUID') {
+    def uuid = UUID.randomUUID().toString()
+    def odir = file("$buildDir/generated/assets/model-en-us")
+    def ofile = file("$odir/uuid")
+    doLast {
+        mkdir odir
+        ofile.text = uuid
+    }
+}
+
+preBuild.dependsOn(genUUID)

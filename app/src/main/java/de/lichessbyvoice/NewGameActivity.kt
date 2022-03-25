@@ -5,16 +5,23 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.forEach
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class NewGameActivity : AppCompatActivity() {
     private var theGameParams = LichessService.AiGameParams(1, "random", "standard")
+    private val srService = SpeechRecognitionService()
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) {
+        srService.destroy()
+    }
 
     private val buttons: IntArray = intArrayOf(
         R.id.button1,
@@ -56,14 +63,22 @@ class NewGameActivity : AppCompatActivity() {
     private fun go(color: String) {
         theGameParams.color = color
         Log.i(TAG, "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}")
-        val mainView = findViewById<View>(R.id.main)
         val model: NewGameViewModel by viewModels()
         model.getGame().observe(this) { }
+        srService.initModel(this)
         runBlocking {
             LichessService.aiGameParamChannel.send(theGameParams)
             val newGame = LichessService.newGameDataChannel.receive()
             if (newGame != null) {
-                LichessService.gameView(mainView, newGame.id)
+                LichessService.gameView(launcher, newGame.id)
+                srService.recognizeMicrophone()
+                launch {
+                    while(true) {
+                        val move = TextFilter.getPossibleMove(srService) ?: break
+                        if (move.isLegal())
+                            LichessService.performMove(newGame.id, move)
+                    }
+                }
                 Log.i(TAG, "showing game ${newGame.id}")
             }
             else
