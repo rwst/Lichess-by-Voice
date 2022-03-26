@@ -1,6 +1,7 @@
 package de.lichessbyvoice
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,8 +10,6 @@ import android.widget.ProgressBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauthdemo.AuthStateManager
@@ -107,20 +106,25 @@ class SelectGameActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == SpeechRecognitionService.PERMISSIONS_REQUEST_RECORD_AUDIO) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Recognizer initialization is a time-consuming and it involves IO,
+                // so we execute it in async task
+                lastGame()
+            } else {
+                finish()
+            }
+        }
+    }
+
     private fun lastGame() {
         if (currentGameCode != null) {
-            srService.initModel(this)
-            runBlocking {
-                LichessService.gameView(launcher, currentGameCode!!)
-                srService.recognizeMicrophone()
-                launch {
-                    while(true) {
-                        val move = TextFilter.getPossibleMove(srService) ?: break
-                        if (move.isLegal())
-                            LichessService.performMove(currentGameCode!!, move)
-                    }
-                }
-            }
+            srService.start(this, launcher, currentGameCode!!)
         }
     }
 
