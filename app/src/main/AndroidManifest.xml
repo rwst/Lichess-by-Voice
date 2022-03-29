@@ -36,6 +36,10 @@
             android:exported="false">
         </activity>
         <activity
+            android:name=".GameDisplayActivity"
+            android:exported="false">
+        </activity>
+        <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
             android:exported="true">
             <intent-filter>

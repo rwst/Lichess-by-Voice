@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
@@ -18,11 +17,6 @@ import kotlinx.coroutines.runBlocking
 class NewGameActivity : AppCompatActivity() {
     private var theGameParams = LichessService.AiGameParams(1, "random", "standard")
     private var newGameCode: String? = null
-    private val srService = SpeechRecognitionService()
-    private val launcher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) {
-        srService.destroy()
-    }
 
     private val buttons: IntArray = intArrayOf(
         R.id.button1,
@@ -65,7 +59,7 @@ class NewGameActivity : AppCompatActivity() {
         theGameParams.color = color
         Log.i(TAG, "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}")
         val model: NewGameViewModel by viewModels()
-        model.getGame().observe(this) { }
+        model.getGame().observe(this) { }  // TODO
         runBlocking {
             LichessService.aiGameParamChannel.send(theGameParams)
             newGameCode = LichessService.newGameDataChannel.receive()?.id
@@ -74,14 +68,13 @@ class NewGameActivity : AppCompatActivity() {
 
     private fun newGame() {
         if (newGameCode != null) {
-            srService.start(this@NewGameActivity, launcher, newGameCode!!)
+            SpeechRecognitionService.start(this@NewGameActivity, newGameCode!!)
             Log.i(TAG, "showing game $newGameCode")
         }
         else
         {
             Log.e(TAG, "create game failed")
         }
-
     }
 
     override fun onRequestPermissionsResult(
@@ -91,8 +84,6 @@ class NewGameActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == SpeechRecognitionService.PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Recognizer initialization is a time-consuming and it involves IO,
-                // so we execute it in async task
                 newGame()
             } else {
                 finish()

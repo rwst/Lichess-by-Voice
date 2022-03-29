@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import net.openid.appauth.AuthorizationException
@@ -19,11 +18,6 @@ class SelectGameActivity : AppCompatActivity() {
     private lateinit var mAuthStateManager: AuthStateManager
     private lateinit var appAuthService: AppAuthService
     private var currentGameCode: String? = null
-    private val srService = SpeechRecognitionService()
-    private val launcher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) {
-        srService.destroy()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mAuthStateManager = AuthStateManager.getInstance(this)
@@ -113,8 +107,6 @@ class SelectGameActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == SpeechRecognitionService.PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Recognizer initialization is a time-consuming and it involves IO,
-                // so we execute it in async task
                 lastGame()
             } else {
                 finish()
@@ -124,7 +116,7 @@ class SelectGameActivity : AppCompatActivity() {
 
     private fun lastGame() {
         if (currentGameCode != null) {
-            srService.start(this, launcher, currentGameCode!!)
+            SpeechRecognitionService.start(this, currentGameCode!!)
         }
     }
 

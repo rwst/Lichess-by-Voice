@@ -1,17 +1,15 @@
 package de.lichessbyvoice
 
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
 import de.lichessbyvoice.chess.Move
 import kotlinx.coroutines.channels.Channel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
-import retrofit2.*
-import retrofit2.http.*
+import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.*
 
 
 object LichessService {
@@ -132,17 +130,6 @@ object LichessService {
     suspend fun mockChallengeAi(): GameDataEntry {
         Log.i(TAG, "mockChallengeAi()")
         return GameDataEntry(id = "JsVm8oTX")
-    }
-
-    // Here we start the threads that 1. show tbe current game; 2. transcribe any speech;
-    // and 3. filter the transcription for valid moves, and actually perform those moves
-    // in the current game
-    fun gameView(
-        launcher: ActivityResultLauncher<Intent>,
-        gameCode: String) {
-        val gameUrl: Uri = Uri.parse("https://lichess.org/$gameCode")
-        val intent = Intent(Intent.ACTION_VIEW, gameUrl)
-        launcher.launch(intent)
     }
 
     fun performMove (gameCode: String, move: Move) {
