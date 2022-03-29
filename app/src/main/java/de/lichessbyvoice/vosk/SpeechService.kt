@@ -5,11 +5,13 @@ import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder.AudioSource
+import android.util.Log
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.channels.Channel
 import org.vosk.Recognizer
 import java.io.IOException
 import kotlin.math.roundToInt
+import kotlin.reflect.typeOf
 
 // The original code from org.vosk (see https://github.com/alphacep/vosk-api/blob/master/android/)
 // was transcribed to Kotlin and modified for coroutine channels (c) 2022 by Ralf Stephan.
@@ -54,12 +56,11 @@ class SpeechService(context: Context, private val recognizer: Recognizer, sample
      *
      * @return Channel if recognition was actually started
      */
-    suspend fun startListening(listener: ErrorListener): Channel<String?>? {
-        if (null != recognizerThread) return null
-        val textChannel = Channel<String?>()
-        recognizerThread = RecognizerThread(textChannel, listener)
+    suspend fun startListening(listener: ErrorListener, channel: Channel<String?>): Boolean {
+        if (null != recognizerThread) return false
+        recognizerThread = RecognizerThread(channel, listener)
         recognizerThread!!.run()
-        return textChannel
+        return true
     }
 
     /**

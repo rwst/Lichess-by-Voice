@@ -3,6 +3,8 @@ package de.lichessbyvoice
 import android.util.Log
 import de.lichessbyvoice.chess.Move
 import kotlinx.coroutines.channels.Channel
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 object TextFilter {
     private const val TAG = "TextFilter"
@@ -13,9 +15,14 @@ object TextFilter {
     suspend fun getPossibleMove() : Move? {
         state = State.FROM_COL
         for (i in 1..4) {
-            Log.i(TAG, "receiving")
-            val text = channel.receive()
-            Log.i(TAG, "received: $text")
+            // Log.i(TAG, "receiving")
+            val textJson = channel.receive()
+            val obj = textJson?.let { Json.decodeFromString<Map<String,String>>(it) }
+            if (obj != null) {
+                if (obj.containsKey("text") && obj["text"]?.isNotEmpty() == true) {
+                    Log.i(TAG, "received: ${obj["text"]}")
+                }
+            }
         }
         return Move()
     }

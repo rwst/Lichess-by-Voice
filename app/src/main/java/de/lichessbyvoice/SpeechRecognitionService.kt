@@ -64,17 +64,17 @@ object SpeechRecognitionService : ErrorListener {
         filterJob?.cancel()
     }
 
-    private suspend fun recognizeMicrophone(context: Context) : Channel<String?>? {
+    private suspend fun recognizeMicrophone(channel: Channel<String?>, context: Context) : Boolean {
         return if (speechService != null) {
             speechService = null
-            null
+            false
         } else {
             val rec = Recognizer(model, 16000.0f)
             speechService = SpeechService(context, rec, 16000.0f)
             Log.i(TAG,"start listening")
-            val channel = speechService!!.startListening(this@SpeechRecognitionService)
+            speechService!!.startListening(this@SpeechRecognitionService, channel)
             Log.i(TAG,"started listening")
-            channel
+            true
         }
     }
 
@@ -122,13 +122,18 @@ object SpeechRecognitionService : ErrorListener {
         // and 3. filter the transcription for valid moves, and actually perform those moves
         // in the current game
         runBlocking {
-            val gameUrl: Uri = Uri.parse("https://lichess.org/$gameCode")
+            val gameUrl = "https://lichess.org/$gameCode"
             val intent = Intent(activity, GameDisplayActivity::class.java)
             intent.putExtra("uri", gameUrl)
             activity.startActivity(intent)
 
+/*
+            val channel = Channel<String?>()
+            TextFilter.channel = channel
+
             recJob = launch {
-                TextFilter.channel = recognizeMicrophone(activity) ?: return@launch // TODO
+                if (!recognizeMicrophone(channel, activity))
+                    return@launch // TODO
             }
             filterJob = launch {
                 while(true) {  // TODO
@@ -137,6 +142,7 @@ object SpeechRecognitionService : ErrorListener {
                         LichessService.performMove(gameCode, move)
                 }
             }
+*/
         }
     }
 
