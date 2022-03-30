@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 class NewGameActivity : AppCompatActivity() {
     private var theGameParams = LichessService.AiGameParams(1, "random", "standard")
     private var newGameCode: String? = null
+    private var newGameColor: String? = null
 
     private val buttons: IntArray = intArrayOf(
         R.id.button1,
@@ -62,14 +63,19 @@ class NewGameActivity : AppCompatActivity() {
         model.getGame().observe(this) { }  // TODO
         runBlocking {
             LichessService.aiGameParamChannel.send(theGameParams)
-            newGameCode = LichessService.newGameDataChannel.receive()?.id
+            val newGame = LichessService.newGameDataChannel.receive()
+            if (newGame != null) {
+                newGameCode = newGame.id
+                newGameColor = newGame.color
+            }
+
         }
     }
 
     private fun newGame() {
         if (newGameCode != null) {
-            SpeechRecognitionService.start(this@NewGameActivity, newGameCode!!)
-            Log.i(TAG, "showing game $newGameCode")
+            SpeechRecognitionService.start(this@NewGameActivity, newGameCode!!, newGameColor!!)
+            Log.i(TAG, "showing game $newGameCode / $newGameColor")
         }
         else
         {

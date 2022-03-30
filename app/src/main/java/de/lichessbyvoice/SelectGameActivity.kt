@@ -18,6 +18,7 @@ class SelectGameActivity : AppCompatActivity() {
     private lateinit var mAuthStateManager: AuthStateManager
     private lateinit var appAuthService: AppAuthService
     private var currentGameCode: String? = null
+    private var currentGameSide: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mAuthStateManager = AuthStateManager.getInstance(this)
@@ -45,6 +46,7 @@ class SelectGameActivity : AppCompatActivity() {
                     if (games != null && games.nowPlaying.isNotEmpty()) {
                         lastGameButton.isEnabled = true
                         currentGameCode = games.nowPlaying[0].gameId
+                        currentGameSide = games.nowPlaying[0].color
                     }
                     else
                     {
@@ -116,7 +118,7 @@ class SelectGameActivity : AppCompatActivity() {
 
     private fun lastGame() {
         if (currentGameCode != null) {
-            SpeechRecognitionService.start(this, currentGameCode!!)
+        SpeechRecognitionService.start(this, currentGameCode!!, currentGameSide!!)
         }
     }
 

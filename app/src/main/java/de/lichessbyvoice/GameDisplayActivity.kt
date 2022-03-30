@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
@@ -18,14 +19,16 @@ class GameDisplayActivity  : AppCompatActivity() {
         val webView = WebView(this)
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
-        setContentView(webView)
         webView.settings.loadWithOverviewMode = true
         webView.settings.useWideViewPort = false
         webView.settings.setSupportZoom(false)
         webView.settings.setJavaScriptEnabled(true);  // TODO
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE;
+        webView.settings.domStorageEnabled = true
         webView.setBackgroundColor(Color.TRANSPARENT)
+        setContentView(webView)
         if (uri != null) {
-            webView.loadUrl("https://lichess.org/JsVm8oTX")
+            webView.loadUrl(uri)
         }
     }
 

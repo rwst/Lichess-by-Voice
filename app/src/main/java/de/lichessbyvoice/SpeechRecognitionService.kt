@@ -98,7 +98,8 @@ object SpeechRecognitionService : ErrorListener {
 
     fun start(
         activity: AppCompatActivity,
-        gameCode: String
+        gameCode: String,
+        gameColor: String,
     ) {
         // Check if user has given permission to record audio, init the model after permission is granted
         val permissionCheck = ContextCompat.checkSelfPermission(
@@ -122,7 +123,7 @@ object SpeechRecognitionService : ErrorListener {
         // and 3. filter the transcription for valid moves, and actually perform those moves
         // in the current game
         runBlocking {
-            val gameUrl = "https://lichess.org/$gameCode"
+            val gameUrl = "https://lichess.org/$gameCode/$gameColor"
             val intent = Intent(activity, GameDisplayActivity::class.java)
             intent.putExtra("uri", gameUrl)
             activity.startActivity(intent)
