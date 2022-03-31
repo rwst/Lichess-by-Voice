@@ -16,6 +16,7 @@ class GameDisplayActivity  : AppCompatActivity() {
         val uri : String? = intent.extras?.getString("uri")
         Log.i(TAG, "Got $uri")
 
+/*
         val webView = WebView(this)
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
@@ -30,6 +31,7 @@ class GameDisplayActivity  : AppCompatActivity() {
         if (uri != null) {
             webView.loadUrl(uri)
         }
+*/
     }
 
     override fun onDestroy() {

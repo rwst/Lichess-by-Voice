@@ -115,20 +115,22 @@ object SpeechRecognitionService : ErrorListener {
             return
         }
 
+        LichessService.currentGameId = gameCode
         if (model == null) {
-            initModel(activity)
-            if (model == null) return // TODO
+            initModel(activity)  // TODO: move this to app start
+            if (model == null) return // TODO: error msg to user, bailout
             }
         // Here we start the coroutines that 1. show the current game; 2. transcribe any speech;
         // and 3. filter the transcription for valid moves, and actually perform those moves
         // in the current game
         runBlocking {
             val gameUrl = "https://lichess.org/$gameCode/$gameColor"
-            val intent = Intent(activity, GameDisplayActivity::class.java)
-            intent.putExtra("uri", gameUrl)
-            activity.startActivity(intent)
+            launch {
+                val intent = Intent(activity, GameDisplayActivity::class.java)
+                intent.putExtra("uri", gameUrl)
+                activity.startActivity(intent)
+            }
 
-/*
             val channel = Channel<String?>()
             TextFilter.channel = channel
 
@@ -137,13 +139,8 @@ object SpeechRecognitionService : ErrorListener {
                     return@launch // TODO
             }
             filterJob = launch {
-                while(true) {  // TODO
-                    val move = TextFilter.getPossibleMove() ?: break
-                    if (move.isLegal())
-                        LichessService.performMove(gameCode, move)
-                }
+                TextFilter.start()
             }
-*/
         }
     }
 

@@ -3,6 +3,7 @@ package de.lichessbyvoice
 import android.util.Log
 import de.lichessbyvoice.chess.Move
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.combineTransform
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -18,6 +19,7 @@ object LichessService {
     fun setToken(token: String?) {
         theToken = token ?: throw RuntimeException("null token")
     }
+    lateinit var currentGameId: String
     val aiGameParamChannel = Channel<AiGameParams>()
     val newGameDataChannel = Channel<GameDataEntry?>()
 
@@ -85,6 +87,8 @@ object LichessService {
 
     data class GameData(var nowPlaying: List<GameDataEntry> = emptyList())
 
+    data class MoveResponse(var ok: Boolean)
+
     interface AccountPlayingApi {
         @GET("/api/account/playing")
         suspend fun getAccountPlaying(
@@ -100,6 +104,16 @@ object LichessService {
             @Field("variant") variant: String,
             @Field("color") color: String
         ) : Response<GameDataEntry>
+    }
+
+    interface BoardMoveApi { // TODO: draw offer/agree
+        @FormUrlEncoded
+        @POST("/api/board/game/{gameId}/move/{move}")
+        suspend fun boardMove(
+            @Header("Authorization") token: String,
+            @Path("gameId") gameId: String,
+            @Path("move") move: String,
+        ) : Response<MoveResponse>
     }
 
     suspend fun getSuspendedGames(): GameData? {
@@ -127,12 +141,21 @@ object LichessService {
         return null
     }
 
+    suspend fun postBoardMove(move: String): Boolean {
+        val boardMoveApi = RetrofitHelper.getInstance().create(BoardMoveApi::class.java)
+        val result = boardMoveApi.boardMove("Bearer $theToken",
+            currentGameId,
+            move)
+        if (result.isSuccessful) {
+            Log.i(TAG, "move $move sent ok")
+            return true
+        }
+        Log.i(TAG, "move $move rejected")
+        return false
+    }
+
     suspend fun mockChallengeAi(): GameDataEntry {
         Log.i(TAG, "mockChallengeAi()")
         return GameDataEntry(id = "JsVm8oTX")
-    }
-
-    fun performMove (gameCode: String, move: Move) {
-        Log.i(TAG, "game: $gameCode, move: $move")
     }
 }

@@ -1,29 +1,60 @@
 package de.lichessbyvoice
 
 import android.util.Log
+import de.lichessbyvoice.chess.ChessTag
 import de.lichessbyvoice.chess.Move
+import de.lichessbyvoice.chess.WordMap
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
 object TextFilter {
     private const val TAG = "TextFilter"
-    enum class State { FROM_COL, FROM_ROW, TO_COL, TO_ROW }
-    lateinit var state : State
     lateinit var channel: Channel<String?>
 
-    suspend fun getPossibleMove() : Move? {
-        state = State.FROM_COL
-        for (i in 1..4) {
-            // Log.i(TAG, "receiving")
+    private fun init() {
+        WordMap.init()
+    }
+
+    suspend fun start() {
+        init()
+        while(true) {
+            val move = getPossibleMove() ?: break
+            if (move.isLegal())
+                LichessService.postBoardMove(move.toString())
+        }
+    }
+
+    private suspend fun getPossibleMove() : Move? {
+        while (true) {
             val textJson = channel.receive()
             val obj = textJson?.let { Json.decodeFromString<Map<String,String>>(it) }
-            if (obj != null) {
-                if (obj.containsKey("text") && obj["text"]?.isNotEmpty() == true) {
-                    Log.i(TAG, "received: ${obj["text"]}")
-                }
+            if ((obj == null
+                        || !obj.containsKey("text")
+                        || obj["text"] == null) || obj["text"]?.isEmpty() == true)
+                continue
+            val text: String = obj["text"] as String
+            if (text == "huh") continue
+            Log.i(TAG, "received: $text")
+            val words = text.split(' ')
+            val features = mutableListOf<ChessTag>()
+            var moveString = ""
+            words.forEach {
+                 if (it in WordMap.keys()) {
+                     val tag = WordMap.toTag(it)
+                     features.add(tag)
+                     moveString += tag.str
+                 }
             }
+            Log.i(TAG, "movestr: $moveString")
+            if (moveString.length != 4
+                || moveString[0] !in 'a'..'h'
+                || moveString[2] !in 'a'..'h'
+                || moveString[1] !in '1'..'8'
+                || moveString[3] !in '1'..'8'
+            )
+                continue
+            Log.i(TAG, "possible move")
         }
-        return Move()
     }
 }
