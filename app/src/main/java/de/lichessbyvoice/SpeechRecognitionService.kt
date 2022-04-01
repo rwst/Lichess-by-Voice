@@ -28,8 +28,6 @@ object SpeechRecognitionService : ErrorListener {
     private var model: Model? = null
     private var speechService: SpeechService? = null
     private var speechStreamService: SpeechStreamService? = null
-    private var recJob : Job? = null
-    private var filterJob : Job? = null
 
     fun setLogLevel(level: LogLevel) {
         LibVosk.setLogLevel(level)
@@ -60,11 +58,9 @@ object SpeechRecognitionService : ErrorListener {
         }
 
         speechStreamService?.stop()
-        recJob?.cancel()
-        filterJob?.cancel()
     }
 
-    private suspend fun recognizeMicrophone(channel: Channel<String?>, context: Context) : Boolean {
+    suspend fun recognizeMicrophone(channel: Channel<String?>, context: Context) : Boolean {
         return if (speechService != null) {
             speechService = null
             false
@@ -78,18 +74,14 @@ object SpeechRecognitionService : ErrorListener {
         }
     }
 
-/*
-    private fun pause(checked: Boolean) {
+    fun pause(checked: Boolean) {
         speechService?.setPause(checked)
     }
-*/
 
     override suspend fun onError(exception: Exception?) {
         if (exception != null) {
             exception.message?.let { setErrorState(it) }
         }
-        recJob?.cancel()
-        recJob?.join()
     }
 
     override fun onTimeout() {
@@ -120,28 +112,11 @@ object SpeechRecognitionService : ErrorListener {
             initModel(activity)  // TODO: move this to app start
             if (model == null) return // TODO: error msg to user, bailout
             }
-        // Here we start the coroutines that 1. show the current game; 2. transcribe any speech;
-        // and 3. filter the transcription for valid moves, and actually perform those moves
-        // in the current game
-        runBlocking {
-            val gameUrl = "https://lichess.org/$gameCode/$gameColor"
-            launch {
-                val intent = Intent(activity, GameDisplayActivity::class.java)
-                intent.putExtra("uri", gameUrl)
-                activity.startActivity(intent)
-            }
 
-            val channel = Channel<String?>()
-            TextFilter.channel = channel
-
-            recJob = launch {
-                if (!recognizeMicrophone(channel, activity))
-                    return@launch // TODO
-            }
-            filterJob = launch {
-                TextFilter.start()
-            }
-        }
+        val gameUrl = "https://lichess.org/$gameCode/$gameColor"
+        val intent = Intent(activity, GameDisplayActivity::class.java)
+        intent.putExtra("uri", gameUrl)
+        activity.startActivity(intent)
     }
 
     private const val TAG = "SpeechRecognitionService"

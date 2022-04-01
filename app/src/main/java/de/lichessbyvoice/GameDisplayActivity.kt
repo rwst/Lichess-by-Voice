@@ -13,8 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 class GameDisplayActivity  : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(GameDisplayObserver(this))
+
         val uri : String? = intent.extras?.getString("uri")
         Log.i(TAG, "Got $uri")
+
 
 /*
         val webView = WebView(this)
