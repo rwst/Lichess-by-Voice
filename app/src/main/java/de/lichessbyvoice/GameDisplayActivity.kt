@@ -1,7 +1,6 @@
 package de.lichessbyvoice
 
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebChromeClient
@@ -9,8 +8,10 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 
 class GameDisplayActivity  : AppCompatActivity() {
+    private lateinit var webView : WebView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(GameDisplayObserver(this))
@@ -18,9 +19,7 @@ class GameDisplayActivity  : AppCompatActivity() {
         val uri : String? = intent.extras?.getString("uri")
         Log.i(TAG, "Got $uri")
 
-
-/*
-        val webView = WebView(this)
+        webView = WebView(this)
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
         webView.settings.loadWithOverviewMode = true
@@ -34,13 +33,30 @@ class GameDisplayActivity  : AppCompatActivity() {
         if (uri != null) {
             webView.loadUrl(uri)
         }
-*/
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        SpeechRecognitionService.destroy()
+    override fun onPause() {
+        super.onPause()
+        Log.i(TAG, "onPause()")
     }
 
-    final val TAG = "GameDisplayActivity"
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "onResume()")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i(TAG, "onStart()")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i(TAG, "onStop()")
+        webView.destroy()
+    }
+
+    companion object {
+        private const val TAG = "GameDisplayActivity"
+    }
 }
