@@ -12,10 +12,10 @@ import kotlinx.coroutines.launch
 class GameDisplayObserver(private val context: Context) : DefaultLifecycleObserver {
     private lateinit var recJob : Job
     private lateinit var filterJob : Job
+    private val channel = Channel<String?>()
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-        val channel = Channel<String?>()
         TextFilter.channel = channel
 
 
@@ -44,11 +44,19 @@ class GameDisplayObserver(private val context: Context) : DefaultLifecycleObserv
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
         Log.i(TAG, "onStart()")
+        if (!recJob.isActive) {
+            recJob = GlobalScope.launch {
+                delay(2000L)
+                SpeechRecognitionService.recognizeMicrophone(channel, context)
+            }
+        }
     }
 
     override fun onStop(owner: LifecycleOwner) {
         super.onStop(owner)
         Log.i(TAG, "onStop()")
+        if (recJob.isActive) recJob.cancel()
+        SpeechRecognitionService.destroy()
     }
 
     companion object {

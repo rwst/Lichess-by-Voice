@@ -59,17 +59,18 @@ object SpeechRecognitionService : ErrorListener {
             speechService!!.shutdown()
         }
 
-        speechStreamService?.stop()
+        //speechStreamService?.stop()
     }
 
     suspend fun recognizeMicrophone(channel: Channel<String?>, context: Context) {
+        Log.i(TAG,"recognizeMicrophone")
         if (speechService == null) {
+            Log.i(TAG,"start listening")
             val rec = Recognizer(model, 16000.0f, ChessGrammar.jsonString())
             speechService = SpeechService(context, rec, 16000.0f)
-            Log.i(TAG,"start listening")
-            speechService!!.startListening(this@SpeechRecognitionService, channel)
-            Log.i(TAG,"started listening")
         }
+        speechService!!.startListening(this@SpeechRecognitionService, channel)
+        Log.i(TAG,"started listening")
     }
 
     fun pause(checked: Boolean) {

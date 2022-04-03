@@ -2,11 +2,10 @@ package de.lichessbyvoice
 
 import android.util.Log
 import de.lichessbyvoice.chess.ChessTag
-import de.lichessbyvoice.chess.Move
 import de.lichessbyvoice.chess.WordMap
 import kotlinx.coroutines.channels.Channel
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 object TextFilter {
     private const val TAG = "TextFilter"
@@ -19,13 +18,13 @@ object TextFilter {
     suspend fun start() {
         init()
         while(true) {
-            val move = getPossibleMove() ?: break
-            if (move.isLegal())
-                LichessService.postBoardMove(move.toString())
+            val move = getPossibleMove()
+//            if (move.isLegal())
+            LichessService.postBoardMove(move)
         }
     }
 
-    private suspend fun getPossibleMove() : Move? {
+    private suspend fun getPossibleMove() : String {
         while (true) {
             val textJson = channel.receive()
             val obj = textJson?.let { Json.decodeFromString<Map<String,String>>(it) }
@@ -55,6 +54,7 @@ object TextFilter {
             )
                 continue
             Log.i(TAG, "possible move")
+            return moveString
         }
     }
 }

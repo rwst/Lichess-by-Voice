@@ -111,6 +111,7 @@ object LichessService {
             @Header("Authorization") token: String,
             @Path("gameId") gameId: String,
             @Path("move") move: String,
+            @Field("offeringDraw") draw: Boolean
         ) : Response<MoveResponse>
     }
 
@@ -143,7 +144,8 @@ object LichessService {
         val boardMoveApi = RetrofitHelper.getInstance().create(BoardMoveApi::class.java)
         val result = boardMoveApi.boardMove("Bearer $theToken",
             currentGameId,
-            move)
+            move,
+        false)
         if (result.isSuccessful) {
             Log.i(TAG, "move $move sent ok")
             return true
