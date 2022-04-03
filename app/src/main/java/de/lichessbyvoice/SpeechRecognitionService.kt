@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import de.lichessbyvoice.chess.ChessGrammar
 import de.lichessbyvoice.vosk.ErrorListener
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -46,6 +47,7 @@ object SpeechRecognitionService : ErrorListener {
     private fun initModel(context: Context) {
         Log.i(TAG, "unpacking model")
         unpackModel(context, "model-en-us", "model")
+        ChessGrammar.init()
     }
 
     private fun setErrorState(message: String) {
@@ -60,17 +62,13 @@ object SpeechRecognitionService : ErrorListener {
         speechStreamService?.stop()
     }
 
-    suspend fun recognizeMicrophone(channel: Channel<String?>, context: Context) : Boolean {
-        return if (speechService != null) {
-            speechService = null
-            false
-        } else {
-            val rec = Recognizer(model, 16000.0f)
+    suspend fun recognizeMicrophone(channel: Channel<String?>, context: Context) {
+        if (speechService == null) {
+            val rec = Recognizer(model, 16000.0f, ChessGrammar.jsonString())
             speechService = SpeechService(context, rec, 16000.0f)
             Log.i(TAG,"start listening")
             speechService!!.startListening(this@SpeechRecognitionService, channel)
             Log.i(TAG,"started listening")
-            true
         }
     }
 

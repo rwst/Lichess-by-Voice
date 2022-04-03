@@ -53,6 +53,10 @@ class GameDisplayActivity  : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         Log.i(TAG, "onStop()")
+
+        webView.setFocusable(true);
+        webView.removeAllViews();
+        webView.clearHistory();
         webView.destroy()
     }
 

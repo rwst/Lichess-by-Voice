@@ -1,9 +1,7 @@
 package de.lichessbyvoice
 
 import android.util.Log
-import de.lichessbyvoice.chess.Move
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.combineTransform
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level

@@ -24,9 +24,5 @@ val ROW_6 = RowTag("6")
 val ROW_7 = RowTag("7")
 val ROW_8 = RowTag("8")
 
-class HybridTag(str : String) : ChessTag(str)
-
-val ROW_4_D_FILE = HybridTag("4d")
-val ROW_6_D_FILE = HybridTag("6d")
-val ROW_7_D_FILE = HybridTag("7d")
-val ROW_8_D_FILE = HybridTag("8d")
+val filetags = listOf(A_FILE, B_FILE, C_FILE, D_FILE, E_FILE, F_FILE, G_FILE, H_FILE)
+val rowtags = listOf(ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8)
