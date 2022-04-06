@@ -192,7 +192,7 @@ class SpeechService(context: Context, private val recognizer: Recognizer, sample
             while (timeoutSamples == Companion.NO_TIMEOUT || remainingSamples > 0)
             {
                 val nread = recorder.read(buffer, 0, buffer.size)
-                if (paused) {
+                if (this.paused) {
                     continue
                 }
                 if (reset) {
@@ -212,7 +212,7 @@ class SpeechService(context: Context, private val recognizer: Recognizer, sample
                 }
             }
             recorder.stop()
-            if (!paused) {
+            if (!this.paused) {
                 // If we met timeout signal that speech ended
                 if (timeoutSamples != Companion.NO_TIMEOUT && remainingSamples <= 0) {
                     listener.onTimeout()

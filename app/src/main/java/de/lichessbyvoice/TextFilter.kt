@@ -3,21 +3,27 @@ package de.lichessbyvoice
 import android.util.Log
 import de.lichessbyvoice.chess.ChessTag
 import de.lichessbyvoice.chess.WordMap
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 object TextFilter {
     private const val TAG = "TextFilter"
+    private var started = false
     lateinit var channel: Channel<String?>
 
     private fun init() {
         WordMap.init()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun start() {
+        if (started) return
         init()
+        started = true
         while(true) {
+            if (channel.isClosedForReceive) break
             val move = getPossibleMove()
 //            if (move.isLegal())
             LichessService.postBoardMove(move)

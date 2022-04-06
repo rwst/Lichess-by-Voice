@@ -9,6 +9,9 @@ import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauthdemo.AuthStateManager
@@ -21,6 +24,7 @@ class SelectGameActivity : AppCompatActivity() {
     private var currentGameSide: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        mainScope = MainScope()
         mAuthStateManager = AuthStateManager.getInstance(this)
         appAuthService = AppAuthService.getInstance(this)
         Log.i(TAG, "onCreate")
@@ -80,6 +84,16 @@ class SelectGameActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "onResume()")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i(TAG, "onStart()")
+    }
+
     override fun onBackPressed() {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
@@ -122,7 +136,14 @@ class SelectGameActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
+        SpeechRecognitionService.destroy()
+    }
+
     companion object {
         private const val TAG = "SelectGameActivity"
+        lateinit var mainScope: CoroutineScope
     }
 }

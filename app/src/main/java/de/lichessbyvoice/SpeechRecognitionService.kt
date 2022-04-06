@@ -29,7 +29,11 @@ object SpeechRecognitionService : ErrorListener {
     private var model: Model? = null
     private var speechService: SpeechService? = null
     private var speechStreamService: SpeechStreamService? = null
+    private val channel = Channel<String?>()
 
+    init {
+        TextFilter.channel = channel
+    }
     fun setLogLevel(level: LogLevel) {
         LibVosk.setLogLevel(level)
     }
@@ -62,7 +66,7 @@ object SpeechRecognitionService : ErrorListener {
         //speechStreamService?.stop()
     }
 
-    suspend fun recognizeMicrophone(channel: Channel<String?>, context: Context) {
+    suspend fun recognizeMicrophone(context: Context) {
         Log.i(TAG,"recognizeMicrophone")
         if (speechService == null) {
             Log.i(TAG,"start listening")
