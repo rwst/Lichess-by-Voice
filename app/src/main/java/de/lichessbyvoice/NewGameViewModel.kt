@@ -1,5 +1,6 @@
 package de.lichessbyvoice
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +14,11 @@ class NewGameViewModel : ViewModel() {
                 val channel = LichessService.aiGameParamChannel
                 val params = channel.receive()
                 ProgressIndicator.showProgress?.let { it() }
-                it.value = LichessService.postChallengeAi(params)
+//                it.value = LichessService.postChallengeAi(params)
+                it.value = LichessService.mockChallengeAi()
+
                 LichessService.newGameDataChannel.send(newGame.value)
+                Log.i("NewGameViewModel", "sent $newGame.value")
                 ProgressIndicator.hideProgress?.let { it() }
             }
         }

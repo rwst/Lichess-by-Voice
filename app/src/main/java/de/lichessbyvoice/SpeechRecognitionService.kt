@@ -1,25 +1,17 @@
 package de.lichessbyvoice
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import de.lichessbyvoice.chess.ChessGrammar
 import de.lichessbyvoice.vosk.ErrorListener
+import de.lichessbyvoice.vosk.SpeechService
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.vosk.LibVosk
 import org.vosk.LogLevel
 import org.vosk.Model
 import org.vosk.Recognizer
-import de.lichessbyvoice.vosk.SpeechService
-import kotlinx.coroutines.Job
 import org.vosk.android.SpeechStreamService
 import org.vosk.android.StorageService
 import java.io.IOException
@@ -93,23 +85,10 @@ object SpeechRecognitionService : ErrorListener {
 
     fun start(
         activity: AppCompatActivity,
+        flags: Int,
         gameCode: String,
         gameColor: String,
     ) {
-        // Check if user has given permission to record audio, init the model after permission is granted
-        val permissionCheck = ContextCompat.checkSelfPermission(
-            activity.applicationContext,
-            Manifest.permission.RECORD_AUDIO
-        )
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.RECORD_AUDIO),
-                PERMISSIONS_REQUEST_RECORD_AUDIO
-            )
-            return
-        }
-
         LichessService.currentGameId = gameCode
         if (model == null) {
             initModel(activity)  // TODO: move this to app start
@@ -118,12 +97,10 @@ object SpeechRecognitionService : ErrorListener {
 
         val gameUrl = "https://lichess.org/$gameCode/$gameColor"
         val intent = Intent(activity, GameDisplayActivity::class.java)
+        intent.flags = flags
         intent.putExtra("uri", gameUrl)
         activity.startActivity(intent)
     }
 
     private const val TAG = "SpeechRecognitionService"
-
-    /* Used to handle permission request */
-    const val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
 }

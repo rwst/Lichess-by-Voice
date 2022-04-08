@@ -156,6 +156,6 @@ object LichessService {
 
     suspend fun mockChallengeAi(): GameDataEntry {
         Log.i(TAG, "mockChallengeAi()")
-        return GameDataEntry(id = "JsVm8oTX")
+        return GameDataEntry(id = "9qigB6bGA5u9")
     }
 }

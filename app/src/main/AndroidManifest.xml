@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LichessByVoice">
         <activity
-            android:name=".SelectGameActivity"
+            android:name="de.lichessbyvoice.SelectGameActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AuthFailedActivity"
+            android:name="de.lichessbyvoice.AuthFailedActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="net.openid.appauth.HANDLE_AUTHORIZATION_RESPONSE"/>
@@ -32,11 +32,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NewGameActivity"
+            android:name="de.lichessbyvoice.NewGameActivity"
             android:exported="false">
         </activity>
         <activity
-            android:name=".GameDisplayActivity"
+            android:name="de.lichessbyvoice.GameDisplayActivity"
             android:exported="false">
         </activity>
         <activity

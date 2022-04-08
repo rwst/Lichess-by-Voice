@@ -8,4 +8,6 @@
 7        android:targetSdkVersion="31" />
 7-->/home/ralf/AndroidStudioProjects/LichessbyVoice/models/src/main/AndroidManifest.xml
 8
-9</manifest>
+9    <application />
+10
+11</manifest>

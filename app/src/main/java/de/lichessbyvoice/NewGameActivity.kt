@@ -1,5 +1,7 @@
 package de.lichessbyvoice
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +14,9 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.forEach
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+
 
 class NewGameActivity : AppCompatActivity() {
     private var theGameParams = LichessService.AiGameParams(1, "random", "standard")
@@ -61,39 +65,29 @@ class NewGameActivity : AppCompatActivity() {
         Log.i(TAG, "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}")
         val model: NewGameViewModel by viewModels()
         model.getGame().observe(this) { }  // TODO
-        runBlocking {
+        SelectGameActivity.mainScope.launch {
             LichessService.aiGameParamChannel.send(theGameParams)
             val newGame = LichessService.newGameDataChannel.receive()
             if (newGame != null) {
                 newGameCode = newGame.id
                 newGameColor = newGame.color
+                newGame()
             }
-
         }
     }
 
     private fun newGame() {
         if (newGameCode != null) {
-            SpeechRecognitionService.start(this@NewGameActivity, newGameCode!!, newGameColor!!)
+            val intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            SpeechRecognitionService.start(this@NewGameActivity,
+                intentFlags,
+                newGameCode!!,
+                newGameColor!!)
             Log.i(TAG, "showing game $newGameCode / $newGameColor")
         }
         else
         {
             Log.e(TAG, "create game failed")
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == SpeechRecognitionService.PERMISSIONS_REQUEST_RECORD_AUDIO) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                newGame()
-            } else {
-                finish()
-            }
         }
     }
 

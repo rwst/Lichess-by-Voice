@@ -1,5 +1,7 @@
 package de.lichessbyvoice
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -9,6 +11,8 @@ import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -82,6 +86,20 @@ class SelectGameActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // Check if user has given permission to record audio, init the model after permission is granted
+        val permissionCheck = ContextCompat.checkSelfPermission(
+            this.applicationContext,
+            Manifest.permission.RECORD_AUDIO
+        )
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                PERMISSIONS_REQUEST_RECORD_AUDIO
+            )
+            return
+        }
     }
 
     override fun onResume() {
@@ -121,10 +139,8 @@ class SelectGameActivity : AppCompatActivity() {
         permissions: Array<String?>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == SpeechRecognitionService.PERMISSIONS_REQUEST_RECORD_AUDIO) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                lastGame()
-            } else {
+        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
+            if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 finish()
             }
         }
@@ -132,7 +148,10 @@ class SelectGameActivity : AppCompatActivity() {
 
     private fun lastGame() {
         if (currentGameCode != null) {
-        SpeechRecognitionService.start(this, currentGameCode!!, currentGameSide!!)
+            SpeechRecognitionService.start(this,
+                Intent.FLAG_ACTIVITY_NEW_TASK,
+                currentGameCode!!,
+                currentGameSide!!)
         }
     }
 
@@ -144,6 +163,7 @@ class SelectGameActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "SelectGameActivity"
+        private const val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
         lateinit var mainScope: CoroutineScope
     }
 }

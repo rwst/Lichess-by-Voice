@@ -13,5 +13,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Lichess by Voice"
+rootProject.buildFileName = 'build.gradle.kts'
 include ':app'
 include ':models'
