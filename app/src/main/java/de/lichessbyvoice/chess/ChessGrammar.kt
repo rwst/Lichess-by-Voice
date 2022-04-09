@@ -7,6 +7,7 @@ object ChessGrammar {
     private var phraseList = mutableListOf<String>()
 
     fun init() {
+        if (phraseList.isNotEmpty()) return
         val strTagMap = mutableMapOf<ChessTag,List<String>>()
         strTag.forEach {
             strTagMap[it.first] = it.second

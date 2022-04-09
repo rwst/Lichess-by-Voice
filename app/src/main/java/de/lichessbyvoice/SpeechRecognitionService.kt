@@ -36,7 +36,7 @@ object SpeechRecognitionService : ErrorListener {
             model = Model(outputPath)
         } catch (e: IOException) {
             setErrorState(
-                "Failed to unpack the model" + e.message)
+                "Failed to unpack the model: ${e.message}, ${e.toString()}")
         }
     }
 
@@ -102,5 +102,5 @@ object SpeechRecognitionService : ErrorListener {
         activity.startActivity(intent)
     }
 
-    private const val TAG = "SpeechRecognitionService"
+    private const val TAG = "SpeechRecognitionServic"
 }
