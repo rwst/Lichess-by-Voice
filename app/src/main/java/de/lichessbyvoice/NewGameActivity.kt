@@ -78,12 +78,13 @@ class NewGameActivity : AppCompatActivity() {
 
     private fun newGame() {
         if (newGameCode != null) {
-            val intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK
             SpeechRecognitionService.start(this@NewGameActivity,
                 intentFlags,
                 newGameCode!!,
                 newGameColor!!)
             Log.i(TAG, "showing game $newGameCode / $newGameColor")
+            finish()
         }
         else
         {

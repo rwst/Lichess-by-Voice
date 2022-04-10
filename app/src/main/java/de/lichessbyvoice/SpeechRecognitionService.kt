@@ -20,7 +20,6 @@ object SpeechRecognitionService : ErrorListener {
 
     private var model: Model? = null
     private var speechService: SpeechService? = null
-    private var speechStreamService: SpeechStreamService? = null
     private val channel = Channel<String?>()
 
     init {
@@ -32,17 +31,20 @@ object SpeechRecognitionService : ErrorListener {
 
     private fun unpackModel(context: Context, sourcePath: String, targetPath: String) {
         try {
-            val outputPath = StorageService.sync(context, sourcePath, targetPath)
+            val outputPath = de.lichessbyvoice.vosk.StorageService.sync(context, sourcePath, targetPath)
+            Log.i(TAG, "unpackmodel() outputPath: $outputPath")
             model = Model(outputPath)
         } catch (e: IOException) {
             setErrorState(
                 "Failed to unpack the model: ${e.message}, ${e.toString()}")
         }
+        // TODO: make this a pre-deploy test
+        if (model == null) throw Exception("null model")
     }
 
     private fun initModel(context: Context) {
         Log.i(TAG, "unpacking model")
-        unpackModel(context, "model-en-us", "model")
+        unpackModel(context, "models/model-en-us", "model")
         ChessGrammar.init()
     }
 
@@ -54,8 +56,6 @@ object SpeechRecognitionService : ErrorListener {
         if (speechService != null) {
             speechService!!.shutdown()
         }
-
-        //speechStreamService?.stop()
     }
 
     suspend fun recognizeMicrophone(context: Context) {
