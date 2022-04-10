@@ -8,12 +8,8 @@ import de.lichessbyvoice.chess.ChessGrammar
 import de.lichessbyvoice.vosk.ErrorListener
 import de.lichessbyvoice.vosk.SpeechService
 import kotlinx.coroutines.channels.Channel
-import org.vosk.LibVosk
-import org.vosk.LogLevel
 import org.vosk.Model
 import org.vosk.Recognizer
-import org.vosk.android.SpeechStreamService
-import org.vosk.android.StorageService
 import java.io.IOException
 
 object SpeechRecognitionService : ErrorListener {
@@ -24,9 +20,6 @@ object SpeechRecognitionService : ErrorListener {
 
     init {
         TextFilter.channel = channel
-    }
-    fun setLogLevel(level: LogLevel) {
-        LibVosk.setLogLevel(level)
     }
 
     private fun unpackModel(context: Context, sourcePath: String, targetPath: String) {
