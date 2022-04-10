@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import de.lichessbyvoice.service.AppAuthService
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 

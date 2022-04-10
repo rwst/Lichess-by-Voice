@@ -12,6 +12,8 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.forEach
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import de.lichessbyvoice.service.LichessService
+import de.lichessbyvoice.service.SpeechRecognitionService
 import kotlinx.coroutines.launch
 
 

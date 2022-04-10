@@ -1,4 +1,4 @@
-package de.lichessbyvoice
+package de.lichessbyvoice.service
 
 import android.util.Log
 import kotlinx.coroutines.channels.Channel

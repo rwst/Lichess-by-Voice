@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.lichessbyvoice
+package de.lichessbyvoice.service
 
 import android.app.PendingIntent
 import android.content.Context
@@ -24,6 +24,9 @@ import android.util.Log
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.browser.customtabs.CustomTabsIntent
+import de.lichessbyvoice.AuthFailedActivity
+import de.lichessbyvoice.SelectGameActivity
+import de.lichessbyvoice.SingletonHolder
 import net.openid.appauth.*
 import net.openid.appauth.browser.AnyBrowserMatcher
 import net.openid.appauth.browser.BrowserMatcher
@@ -107,7 +110,8 @@ class AppAuthService private constructor(context: Context) {
     ) {
         mAuthStateManager.updateAfterRegistration(response, ex)
         if (response == null) {
-            Log.i(TAG,"Failed to dynamically register client",
+            Log.i(
+                TAG,"Failed to dynamically register client",
                 ex
             )
             return
@@ -124,7 +128,8 @@ class AppAuthService private constructor(context: Context) {
     private fun initializeClient() {
         Log.i(TAG, "initializeClient()")
         if (mConfiguration.getClientId() != null) {
-            Log.i(TAG,"Using static client ID: " + mConfiguration.getClientId()
+            Log.i(
+                TAG,"Using static client ID: " + mConfiguration.getClientId()
             )
             // use a statically configured client ID
             mClientId.set(mConfiguration.getClientId())
@@ -167,7 +172,8 @@ class AppAuthService private constructor(context: Context) {
         ex: AuthorizationException
     ) {
         if (config == null) {
-            Log.i(TAG,"Failed to retrieve discovery document",
+            Log.i(
+                TAG,"Failed to retrieve discovery document",
                 ex
             )
             return

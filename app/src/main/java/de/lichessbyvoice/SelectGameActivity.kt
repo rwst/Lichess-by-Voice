@@ -12,6 +12,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import de.lichessbyvoice.service.AppAuthService
+import de.lichessbyvoice.service.LichessService
+import de.lichessbyvoice.service.SpeechRecognitionService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

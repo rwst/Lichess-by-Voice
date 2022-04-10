@@ -1,9 +1,11 @@
-package de.lichessbyvoice
+package de.lichessbyvoice.service
 
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import de.lichessbyvoice.GameDisplayActivity
+import de.lichessbyvoice.chess.TextFilter
 import de.lichessbyvoice.chess.ChessGrammar
 import de.lichessbyvoice.vosk.ErrorListener
 import de.lichessbyvoice.vosk.SpeechService
@@ -19,7 +21,7 @@ object SpeechRecognitionService : ErrorListener {
     private val channel = Channel<String?>()
 
     init {
-        TextFilter.channel = channel
+        de.lichessbyvoice.chess.TextFilter.channel = channel
     }
 
     private fun unpackModel(context: Context, sourcePath: String, targetPath: String) {

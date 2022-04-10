@@ -3,6 +3,7 @@ package de.lichessbyvoice
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
+import de.lichessbyvoice.service.SpeechRecognitionService
 import kotlinx.coroutines.*
 
 class GameDisplayObserver(private val context: Context) : DefaultLifecycleObserver {
@@ -16,7 +17,7 @@ class GameDisplayObserver(private val context: Context) : DefaultLifecycleObserv
          }
          SelectGameActivity.mainScope.launch {
             delay(2000L)
-            TextFilter.start()
+            de.lichessbyvoice.chess.TextFilter.start()
          }
     }
 

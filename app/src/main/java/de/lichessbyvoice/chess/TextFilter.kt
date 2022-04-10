@@ -1,8 +1,7 @@
-package de.lichessbyvoice
+package de.lichessbyvoice.chess
 
 import android.util.Log
-import de.lichessbyvoice.chess.ChessTag
-import de.lichessbyvoice.chess.WordMap
+import de.lichessbyvoice.service.LichessService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.decodeFromString
