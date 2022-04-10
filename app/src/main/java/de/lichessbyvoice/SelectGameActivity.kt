@@ -97,7 +97,6 @@ class SelectGameActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.RECORD_AUDIO),
                 PERMISSIONS_REQUEST_RECORD_AUDIO
             )
-            return
         }
     }
 
@@ -140,7 +139,7 @@ class SelectGameActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                finish()
+                finish() // TODO: alert user and bail out
             }
         }
     }

@@ -25,8 +25,9 @@ object TextFilter {
         while(true) {
             if (channel.isClosedForReceive) break
             val move = getPossibleMove()
-//            if (move.isLegal())
+//            if (move.isLegal())    // TODO: check move before posting, needs scalachess
             LichessService.postBoardMove(move)
+            // TODO: beep if Lichess says not ok
         }
     }
 

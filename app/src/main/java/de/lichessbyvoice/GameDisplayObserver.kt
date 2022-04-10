@@ -27,7 +27,6 @@ class GameDisplayObserver(private val context: Context) : DefaultLifecycleObserv
     }
 
     override fun onPause(owner: LifecycleOwner) {
-        //throw Exception()
         super.onPause(owner)
         Log.i(TAG, "onPause()")
         SpeechRecognitionService.pause(true)
