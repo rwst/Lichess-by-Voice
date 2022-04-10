@@ -12,11 +12,24 @@ object ChessGrammar {
         strTag.forEach {
             strTagMap[it.first] = it.second
         }
-        filetags.forEach { it1 ->
-            rowtags.forEach { it2 ->
+        // normal move squares: a1, b7 ....
+        fileTags.forEach { it1 ->
+            rowTags.forEach { it2 ->
                 strTagMap[it1]?.forEach { it3 ->
                     strTagMap[it2]?.forEach { it4 ->
                         phraseList.add("$it3 $it4")
+                    }
+                }
+            }
+        }
+        // promotion squares: e8Q, h8N ....
+        fileTags.forEach { it1 ->
+            promPieceTag.forEach { it2 ->
+                strTagMap[it1]?.forEach { it3 ->
+                    strTagMap[ROW_8]?.forEach { it4 ->
+                        strTagMap[it2]?.forEach { it5 ->
+                            phraseList.add("$it3 $it4 $it5")
+                        }
                     }
                 }
             }

@@ -24,5 +24,13 @@ val ROW_6 = RowTag("6")
 val ROW_7 = RowTag("7")
 val ROW_8 = RowTag("8")
 
-val filetags = listOf(A_FILE, B_FILE, C_FILE, D_FILE, E_FILE, F_FILE, G_FILE, H_FILE)
-val rowtags = listOf(ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8)
+class PieceTag(str: String) : ChessTag(str)
+
+val KNIGHT = PieceTag("N")
+val BISHOP = PieceTag("B")
+val ROOK = PieceTag("R")
+val QUEEN = PieceTag("Q")
+
+val fileTags = listOf(A_FILE, B_FILE, C_FILE, D_FILE, E_FILE, F_FILE, G_FILE, H_FILE)
+val rowTags = listOf(ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8)
+val promPieceTag = listOf(KNIGHT, BISHOP, ROOK, QUEEN)

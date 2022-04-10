@@ -17,6 +17,10 @@ val strTag : List<Pair<ChessTag,List<String>>> = listOf(
     Pair(ROW_6, listOf("six", "sex", "sax")),
     Pair(ROW_7, listOf("seven")),
     Pair(ROW_8, listOf("eight")),
+    Pair(KNIGHT, listOf("knight", "night", "nigh", "neither")),
+    Pair(BISHOP, listOf("bishop")),
+    Pair(ROOK, listOf("rook", "book", "look")),
+    Pair(QUEEN, listOf("queen", "green"))
 )
 
 var theMap : MutableMap<String,ChessTag> = mutableMapOf()
