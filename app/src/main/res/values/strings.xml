@@ -20,4 +20,7 @@
     <string name="newgame_strength_8">8</string>
     <string name="newgame_text_strength">Strength</string>
     <string name="newgame_text_start">Start game with</string>
+    <string name="mic_permission_alert">Need permission to record audio</string>
+    <string name="mic_permission_alert_text">Without audio permission Lichess by Voice will not know what move to make. If you previously denied this permission you may need to reset it yourself in your device\'s app settings</string>
+    <string name="mic_permission_button">Exit app</string>
 </resources>

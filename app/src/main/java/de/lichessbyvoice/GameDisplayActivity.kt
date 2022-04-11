@@ -25,7 +25,7 @@ class GameDisplayActivity  : AppCompatActivity() {
         webView.settings.loadWithOverviewMode = true
         webView.settings.useWideViewPort = false
         webView.settings.setSupportZoom(false)
-        webView.settings.setJavaScriptEnabled(true);  // TODO
+        webView.settings.setJavaScriptEnabled(true);
         webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE;
         webView.settings.domStorageEnabled = true
         webView.setBackgroundColor(Color.TRANSPARENT)

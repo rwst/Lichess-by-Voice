@@ -1,6 +1,7 @@
 package de.lichessbyvoice
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -9,9 +10,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import de.lichessbyvoice.service.AppAuthService
 import de.lichessbyvoice.service.LichessService
 import de.lichessbyvoice.service.SpeechRecognitionService
@@ -142,7 +145,8 @@ class SelectGameActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                finish() // TODO: alert user and bail out
+                val newFragment = MicPermissionDialogFragment(this)
+                newFragment.show(supportFragmentManager, null)
             }
         }
     }
