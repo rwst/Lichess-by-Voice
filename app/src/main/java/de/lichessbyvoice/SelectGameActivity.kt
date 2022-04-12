@@ -42,6 +42,7 @@ class SelectGameActivity : AppCompatActivity() {
         val newGameButton: Button = findViewById(R.id.newgame_button)
         val lastGameButton: Button = findViewById(R.id.lastgame_button)
         lastGameButton.isEnabled = false
+        val helpButton: Button = findViewById(R.id.help_button)
         ProgressIndicator.setShowFunc { showProgress() }
         ProgressIndicator.setHideFunc { hideProgress() }
         hideProgress()
@@ -54,6 +55,7 @@ class SelectGameActivity : AppCompatActivity() {
                 LichessService.setToken(mAuthStateManager.current.accessToken)
                 newGameButton.setOnClickListener { newGame() }
                 lastGameButton.setOnClickListener { lastGame() }
+                helpButton.setOnClickListener { help() }
                 val model: ActiveGamesViewModel by viewModels()
                 model.getGames().observe(this) { games ->
                     if (games != null && games.nowPlaying.isNotEmpty()) {
@@ -131,6 +133,11 @@ class SelectGameActivity : AppCompatActivity() {
     private fun hideProgress() {
         val spinner: ProgressBar = findViewById(R.id.selectGame_progressBar)
         spinner.visibility = View.GONE
+    }
+
+    private fun help() {
+        val intent = Intent(this, HelpActivity::class.java)
+        startActivity(intent)
     }
 
     private fun newGame() {

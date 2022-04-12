@@ -33,6 +33,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".HelpActivity"
+            android:exported="false">
+        </activity>
+        <activity
             android:name=".NewGameActivity"
             android:exported="false">
         </activity>

@@ -8,14 +8,26 @@
     tools:context="de.lichessbyvoice.SelectGameActivity">
 
     <Button
+        android:id="@+id/help_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_button"
+        app:layout_constraintBottom_toTopOf="@+id/newgame_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <Button
         android:id="@+id/newgame_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/main_button"
         app:layout_constraintBottom_toTopOf="@+id/lastgame_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/help_button"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <Button

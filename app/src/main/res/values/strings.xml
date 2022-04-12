@@ -1,5 +1,16 @@
 <resources>
     <string name="app_name">Lichess by Voice</string>
+    <string name="help_button">About / Help</string>
+    <string name="help_textview">
+        <p><b>How to play by voice</b></p>
+Use long algebraic notation. Examples: <b>e2e4</b>, <b>g8f6</b>.
+For castling specify the King move. Examples: <b>e1g1</b> or <b>e8c8</b>.
+        Promoting a pawn on last rank, you add the name of the piece. Examples: <b>a7a8 Queen</b> or <b>b2b1 Rook</b>. Omitting the piece will make it a Queen.
+<br/>
+        <b>Continuing a game</b><br/>
+In this version you can continue the game in your Lichess ongoing game list that has waited the longest. Choosing from the list will be implemented in a later version.
+    </string>
+    <string name="about_textview">Lichess By Voice---Version: ${v}</string>
     <string name="main_button">New Game</string>
     <string name="lastgame_button">Continue Suspended Game</string>
     <string name="account_button">Create/Link Account</string>
@@ -23,4 +34,5 @@
     <string name="mic_permission_alert">Need permission to record audio</string>
     <string name="mic_permission_alert_text">Without audio permission Lichess by Voice will not know what move to make. If you previously denied this permission you may need to reset it yourself in your device\'s app settings</string>
     <string name="mic_permission_button">Exit app</string>
+    <string name="textview">TextView</string>
 </resources>
