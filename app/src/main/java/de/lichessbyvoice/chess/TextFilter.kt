@@ -1,5 +1,7 @@
 package de.lichessbyvoice.chess
 
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.util.Log
 import de.lichessbyvoice.service.LichessService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,8 +27,11 @@ object TextFilter {
             if (channel.isClosedForReceive) break
             val move = getPossibleMove()
 //            if (move.isLegal())    // TODO: check move before posting, needs scalachess
-            LichessService.postBoardMove(move)
-            // TODO: beep if Lichess says not ok
+            val moveOk = LichessService.postBoardMove(move)
+            // beep if Lichess says not ok
+            if (!moveOk)
+                ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                    .startTone(ToneGenerator.TONE_PROP_BEEP, 200)
         }
     }
 
