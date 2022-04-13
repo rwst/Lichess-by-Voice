@@ -1,14 +1,17 @@
 <resources>
     <string name="app_name">Lichess by Voice</string>
     <string name="help_button">About / Help</string>
-    <string name="help_textview">
-        <p><b>How to play by voice</b></p>
-Use long algebraic notation. Examples: <b>e2e4</b>, <b>g8f6</b>.
-For castling specify the King move. Examples: <b>e1g1</b> or <b>e8c8</b>.
-        Promoting a pawn on last rank, you add the name of the piece. Examples: <b>a7a8 Queen</b> or <b>b2b1 Rook</b>. Omitting the piece will make it a Queen.
-<br/>
-        <b>Continuing a game</b><br/>
-In this version you can continue the game in your Lichess ongoing game list that has waited the longest. Choosing from the list will be implemented in a later version.
+    <string name="help_textview"><![CDATA[
+        <h3>What is Lichess?</h3>
+        <p>lichess.org is a cost-free, ad-free chess server. Lichess, as well as this app, is Open Source.</p>
+        <h3>What does the app do?</h3>
+        <p>It connects to your Lichess account (you can create one too). In this version, having opened a game, you are enabled to speak moves in the English language to play the game displayed. You can view this game on this device or open the game on other devices to get a larger picture. Other languages are planned.</>
+        <h3>How to play by voice</h3>
+        <p><ul><li>Use long algebraic notation. Examples: <b>e2e4</b>, <b>g8f6</b>.</li>
+        <li>For castling specify the King move. Examples: <b>e1g1</b> or <b>e8c8</b>.</li>
+            <li>Promoting a pawn on last rank, you add the name of the piece. Examples: <b>a7a8 Queen</b> or <b>b2b1 Rook</b>. Omitting the piece will make it a Queen.</li></ul></p>
+        <h3>Continuing a game</h3>
+        <p>In this version you can continue the game in your Lichess ongoing game list that has waited the longest. Choosing from the list will be implemented in a later version.</p>]]>
     </string>
     <string name="about_textview">Lichess By Voice---Version: ${v}</string>
     <string name="main_button">New Game</string>
