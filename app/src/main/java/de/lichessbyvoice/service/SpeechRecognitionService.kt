@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import de.lichessbyvoice.GameDisplayActivity
+import de.lichessbyvoice.NullModelDialogFragment
 import de.lichessbyvoice.chess.TextFilter
 import de.lichessbyvoice.chess.ChessGrammar
 import de.lichessbyvoice.vosk.ErrorListener
@@ -87,8 +88,12 @@ object SpeechRecognitionService : ErrorListener {
         LichessService.currentGameId = gameCode
         if (model == null) {
             initModel(activity)  // TODO: move this to app start
-            if (model == null) return // TODO: error msg to user, bailout
+            if (model == null) {
+                val newFragment = NullModelDialogFragment(activity)
+                newFragment.show(activity.supportFragmentManager, null)
+                return
             }
+        }
 
         val gameUrl = "https://lichess.org/$gameCode/$gameColor"
         val intent = Intent(activity, GameDisplayActivity::class.java)

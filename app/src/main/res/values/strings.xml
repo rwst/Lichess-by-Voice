@@ -37,5 +37,7 @@
     <string name="mic_permission_alert">Need permission to record audio</string>
     <string name="mic_permission_alert_text">Without audio permission Lichess by Voice will not know what move to make. If you previously denied this permission you may need to reset it yourself in your device\'s app settings</string>
     <string name="mic_permission_button">Exit app</string>
+    <string name="null_model_alert">Speech model initialization failed</string>
+    <string name="null_model_alert_text">Please report at https://github.com/rwst/Lichess-by-Voice/issues</string>
     <string name="textview">TextView</string>
 </resources>
