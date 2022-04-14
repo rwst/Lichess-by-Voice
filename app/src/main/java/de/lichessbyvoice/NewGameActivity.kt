@@ -38,7 +38,13 @@ class NewGameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.newgame_activity)
         val variantSwitch: SwitchCompat = findViewById(R.id.newgame_variant)
-        variantSwitch.isEnabled = false
+        variantSwitch.isEnabled = true
+        variantSwitch.setOnCheckedChangeListener { _, isChecked ->
+            when(isChecked) {
+                true -> theGameParams.variant = "chess960"
+                false -> theGameParams.variant = "standard"
+            }
+        }
         val strengthRadio: MaterialButtonToggleGroup = findViewById(R.id.newgame_radio_strength)
         strengthRadio.check(buttons[theGameParams.level - 1])
         strengthRadio.forEach { button ->

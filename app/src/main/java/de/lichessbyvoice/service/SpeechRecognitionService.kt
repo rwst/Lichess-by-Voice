@@ -22,7 +22,7 @@ object SpeechRecognitionService : ErrorListener {
     private val channel = Channel<String?>()
 
     init {
-        de.lichessbyvoice.chess.TextFilter.channel = channel
+        TextFilter.channel = channel
     }
 
     private fun unpackModel(context: Context, sourcePath: String, targetPath: String) {
@@ -32,7 +32,7 @@ object SpeechRecognitionService : ErrorListener {
             model = Model(outputPath)
         } catch (e: IOException) {
             setErrorState(
-                "Failed to unpack the model: ${e.message}, ${e.toString()}")
+                "Failed to unpack the model: ${e.message}, $e")
         }
         // TODO: make this a pre-deploy test
         if (model == null) throw Exception("null model")
