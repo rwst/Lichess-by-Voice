@@ -13,7 +13,7 @@
         <h3>Continuing a game</h3>
         <p>In this version you can continue the game in your Lichess ongoing game list that has waited the longest. Choosing from the list will be implemented in a later version.</p>]]>
     </string>
-    <string name="about_textview">Lichess By Voice---Version: ${v}</string>
+    <string name="about_textview">Lichess By Voice---Version: XXX_VERSION_XXX</string>
     <string name="main_button">New Game</string>
     <string name="lastgame_button">Continue Suspended Game</string>
     <string name="account_button">Create/Link Account</string>
