@@ -22,10 +22,15 @@ object ChessGrammar {
                 }
             }
         }
-        // promotion squares: e8Q, h8N ....
+        // promotion squares: e8Q, h1N ....
         fileTags.forEach { it1 ->
             promPieceTag.forEach { it2 ->
                 strTagMap[it1]?.forEach { it3 ->
+                    strTagMap[ROW_1]?.forEach { it4 ->
+                        strTagMap[it2]?.forEach { it5 ->
+                            phraseList.add("$it3 $it4 $it5")
+                        }
+                    }
                     strTagMap[ROW_8]?.forEach { it4 ->
                         strTagMap[it2]?.forEach { it5 ->
                             phraseList.add("$it3 $it4 $it5")
