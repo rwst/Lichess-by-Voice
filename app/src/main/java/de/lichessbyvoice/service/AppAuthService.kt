@@ -1,8 +1,10 @@
+package de.lichessbyvoice.service
+
 /*
  * Adapted from net.openid.appauthdemo.LoginActivity by R. Stephan, 2022-Mar-09
  * Copyright 2015 The AppAuth for Android Authors. All Rights Reserved.
  *
-     * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -12,8 +14,6 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package de.lichessbyvoice.service
 
 import android.app.PendingIntent
 import android.content.Context
