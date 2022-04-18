@@ -49,6 +49,7 @@ object TextFilter {
         }
     }
 
+    // TODO: test this
     private suspend fun getPossibleMove() : String {
         while (true) {
             val textJson = channel.receive()
@@ -71,7 +72,8 @@ object TextFilter {
                  }
             }
             Log.i(TAG, "movestr: $moveString")
-            if (moveString[0] !in 'a'..'h'
+            if (moveString.length !in 4..5
+                || moveString[0] !in 'a'..'h'
                 || moveString[2] !in 'a'..'h'
                 || moveString[1] !in '1'..'8'
                 || moveString[3] !in '1'..'8'
