@@ -71,8 +71,7 @@ object TextFilter {
                  }
             }
             Log.i(TAG, "movestr: $moveString")
-            if (moveString.length != 4
-                || moveString[0] !in 'a'..'h'
+            if (moveString[0] !in 'a'..'h'
                 || moveString[2] !in 'a'..'h'
                 || moveString[1] !in '1'..'8'
                 || moveString[3] !in '1'..'8'
