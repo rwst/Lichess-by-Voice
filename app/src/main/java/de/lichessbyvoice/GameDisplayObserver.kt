@@ -29,7 +29,7 @@ class GameDisplayObserver(private val context: Context) : DefaultLifecycleObserv
             delay(2000L)
             SpeechRecognitionService.recognizeMicrophone(context)
          }
-         SelectGameActivity.mainScope.launch {
+        TheApplication.mainScope.launch {
             delay(2000L)
             de.lichessbyvoice.chess.TextFilter.start()
          }

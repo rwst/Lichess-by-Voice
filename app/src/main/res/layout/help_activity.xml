@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="24dp"
         android:text="@string/about_textview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:padding="24dp"
         android:text="@string/help_textview"
+        android:scrollbars="vertical"
         android:textSize="16sp"
         android:textAlignment="viewStart"
         app:layout_constraintEnd_toEndOf="parent"

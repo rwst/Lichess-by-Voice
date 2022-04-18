@@ -83,7 +83,7 @@ class NewGameActivity : AppCompatActivity() {
         Log.i(TAG, "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}")
         val model: NewGameViewModel by viewModels()
         model.getGame().observe(this) { }  // TODO
-        SelectGameActivity.mainScope.launch {
+        TheApplication.mainScope.launch {
             LichessService.aiGameParamChannel.send(theGameParams)
             val newGame = LichessService.newGameDataChannel.receive()
             if (newGame != null) {

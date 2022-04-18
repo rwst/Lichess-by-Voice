@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.text.method.ScrollingMovementMethod
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +32,7 @@ class HelpActivity : AppCompatActivity() {
         val txtView: TextView = findViewById(R.id.help_textView)
         val strHelp = resources.getString(R.string.help_textview)
         txtView.text = Html.fromHtml(strHelp, Html.FROM_HTML_MODE_COMPACT)
+        txtView.movementMethod = ScrollingMovementMethod()
         val aboutView: TextView = findViewById(R.id.about_textView)
         val strAbout = resources.getString(R.string.about_textview)
         try {
