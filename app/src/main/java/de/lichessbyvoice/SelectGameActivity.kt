@@ -62,20 +62,7 @@ class SelectGameActivity : AppCompatActivity() {
                 newGameButton.setOnClickListener { newGame() }
                 lastGameButton.setOnClickListener { lastGame() }
                 helpButton.setOnClickListener { help() }
-                if (currentGameCode == null) {
-                    val model: ActiveGamesViewModel by viewModels()
-                    model.getGames().observe(this) { games ->
-                        if (games != null && games.nowPlaying.isNotEmpty()) {
-                            lastGameButton.isEnabled = true
-                            currentGameCode = games.nowPlaying[0].gameId
-                            currentGameSide = games.nowPlaying[0].color
-                        }
-                        else
-                        {
-                            lastGameButton.isEnabled = false
-                        }
-                    }
-                }
+                setCurrentGame()
             } else {
                 Log.i(TAG, "authorization missing")
                 val intent = Intent(this, AuthFailedActivity::class.java)
@@ -116,8 +103,28 @@ class SelectGameActivity : AppCompatActivity() {
         }
     }
 
+    private fun setCurrentGame() {
+        Log.i(TAG, "setCurrentGame()")
+        val lastGameButton: Button = findViewById(R.id.lastgame_button)
+        val model: ActiveGamesViewModel by viewModels()
+        model.getGames().observe(this) { games ->
+            if (games != null && games.nowPlaying.isNotEmpty()) {
+                games.nowPlaying.forEach {
+                    Log.i(TAG, "currentGame: ${it.gameId} ismyturn: ${it.isMyTurn}")
+                }
+                lastGameButton.isEnabled = true
+                currentGameCode = games.nowPlaying[0].gameId
+                currentGameSide = games.nowPlaying[0].color
+            }
+            else
+            {
+                lastGameButton.isEnabled = false
+            }
+        }
+    }
     override fun onResume() {
         super.onResume()
+        setCurrentGame()
         Log.i(TAG, "onResume()")
     }
 

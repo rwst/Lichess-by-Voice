@@ -103,7 +103,8 @@ object LichessService {
     interface AccountPlayingApi {
         @GET("/api/account/playing")
         suspend fun getAccountPlaying(
-            @Header("Authorization") token: String ) : Response<GameData>
+            @Header("Authorization") token: String
+        ) : Response<GameData>
     }
 
     interface ChallengeAiApi {
