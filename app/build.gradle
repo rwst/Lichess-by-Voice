@@ -5,13 +5,13 @@ buildscript {
         google()
         mavenCentral()
     }
-//    dependencies {
-//        classpath 'com.android.tools.build:gradle:7.1.3'
-//    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.3'
+    }
 }
 
 plugins {
-    id 'com.android.application' // version '7.1.2'
+    id 'com.android.application'
     id 'org.jetbrains.kotlin.android' // version '1.6.20'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.20'
 }
@@ -60,6 +60,7 @@ android {
     }
 }
 
+
 tasks.register('genUUID') {
     def uuid = UUID.randomUUID().toString()
     def odir = file("$buildDir/generated/assets/model")
@@ -71,7 +72,6 @@ tasks.register('genUUID') {
 }
 
 preBuild.dependsOn(genUUID)
-
 
 dependencies {
 
@@ -91,6 +91,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
     implementation 'net.java.dev.jna:jna:5.11.0@aar'
     implementation group: 'com.alphacephei', name: 'vosk-android', version: '0.3.32'
+    implementation 'com.github.bhlangonijr:chesslib:1.3.3'
     testImplementation "junit:junit:4.13.2"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

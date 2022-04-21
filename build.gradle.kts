@@ -5,7 +5,9 @@ plugins {
 }
 
 buildscript {
-    repositories { mavenCentral() }
+    repositories {
+        mavenCentral()
+    }
 
     dependencies {
         val kotlinVersion = "1.6.20"
