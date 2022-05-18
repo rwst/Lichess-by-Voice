@@ -12,6 +12,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import de.lichessbyvoice.ProgressIndicator.hideProgress
+import de.lichessbyvoice.ProgressIndicator.showProgress
 import de.lichessbyvoice.service.AppAuthService
 import de.lichessbyvoice.service.LichessService
 import de.lichessbyvoice.service.SpeechRecognitionService
@@ -55,6 +57,7 @@ class SelectGameActivity : AppCompatActivity() {
 
         val resp = AuthorizationResponse.fromIntent(intent)
         val ex = AuthorizationException.fromIntent(intent)
+        Log.i(TAG, "resp:$resp, ex:$ex")
         if (resp == null) {
             // the activity is opened normally
             if (mAuthStateManager.isAuthorized()) {
@@ -68,6 +71,7 @@ class SelectGameActivity : AppCompatActivity() {
                 val intent = Intent(this, AuthFailedActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
+                finish()
             }
         }
         else {
@@ -110,7 +114,7 @@ class SelectGameActivity : AppCompatActivity() {
         model.getGames().observe(this) { games ->
             if (games != null && games.nowPlaying.isNotEmpty()) {
                 games.nowPlaying.forEach {
-                    Log.i(TAG, "currentGame: ${it.gameId} ismyturn: ${it.isMyTurn}")
+                    Log.i(TAG, "currentGame: ${it.gameId} ismyturn: ${it.fen}")
                 }
                 lastGameButton.isEnabled = true
                 currentGameCode = games.nowPlaying[0].gameId
@@ -124,6 +128,10 @@ class SelectGameActivity : AppCompatActivity() {
     }
     override fun onResume() {
         super.onResume()
+        if (!LichessService.isTokenSet()) {
+            finish()
+            return
+        }
         setCurrentGame()
         Log.i(TAG, "onResume()")
     }

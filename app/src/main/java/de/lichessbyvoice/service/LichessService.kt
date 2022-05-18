@@ -1,7 +1,12 @@
 package de.lichessbyvoice.service
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import com.launchdarkly.eventsource.EventSource
+import de.lichessbyvoice.GameStreamEventHandler
 import kotlinx.coroutines.channels.Channel
+import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -9,6 +14,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.net.URI
+import java.time.Duration
 
 // Copyright 2022 Ralf Stephan
 //
@@ -30,13 +37,14 @@ object LichessService {
     fun setToken(token: String?) {
         theToken = token ?: throw RuntimeException("null token")
     }
+    fun isTokenSet(): Boolean { return this::theToken.isInitialized }
     lateinit var currentGameId: String
     val aiGameParamChannel = Channel<AiGameParams>()
     val newGameDataChannel = Channel<GameDataEntry?>()
 
     object RetrofitHelper {
 
-        private const val baseUrl = "https://lichess.org/"
+        const val baseUrl = "https://lichess.org/"
         private var logging = HttpLoggingInterceptor()
 
         fun getInstance(): Retrofit {
@@ -95,6 +103,47 @@ object LichessService {
         var color: String,
         var variant: String
     )
+
+    abstract class ServerSideEvent {}
+
+    data class GameStateEvent (
+        val type: String = "gameState",
+        val moves: String = "",
+        val status: String = "",
+        val winner: String = ""
+    ) : ServerSideEvent()
+
+    data class ChatLineEvent (
+        val type: String = "chatLine",
+        val username: String = "",
+        val text: String = "",
+        val room: String = ""
+    ) : ServerSideEvent()
+
+    data class GameState (
+        val type: String = "gameState",
+        val moves: String = "",
+        val wtime: Int = 0,
+        val btime: Int = 0,
+        val winc: Int = 0,
+        val binc: Int = 0,
+        val status: String = "started"
+    )
+
+    data class GameFullEvent (
+        val type: String = "gameFull",
+        val id: String = "",
+        val rated: Boolean = false,
+        val variant: VariantType = VariantType(),
+        val perf: String = "",
+        val source: String = "",
+        val speed: String = "",
+        val createdAt: Long = 0,
+        val white: User = User(),
+        val black: User = User(),
+        val initialFen: String = "",
+        val state: GameState = GameState()
+    ) : ServerSideEvent()
 
     data class GameData(var nowPlaying: List<GameDataEntry> = emptyList())
 
@@ -166,6 +215,19 @@ object LichessService {
         }
         Log.i(TAG, "move $move rejected")
         return false
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getBoardGameStream(gameId: String) {
+        val eventHandler = GameStreamEventHandler()
+        val url = RetrofitHelper.baseUrl + String.format("/api/board/game/stream/{gameId}");
+        val headers: Headers = Headers.headersOf("Authorization", "Bearer $theToken")
+        val builder = EventSource.Builder(eventHandler, URI.create(url))
+            .reconnectTime(Duration.ofMillis(3000))
+            .headers(headers)
+
+        val eventSource = builder.build()
+        eventSource.start()
     }
 
     fun mockChallengeAi(): GameDataEntry {
