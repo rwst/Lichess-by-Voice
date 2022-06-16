@@ -8,7 +8,9 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
+import de.lichessbyvoice.service.LichessService
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 
 // Copyright 2022 Ralf Stephan
 //
@@ -31,7 +33,8 @@ class GameDisplayActivity  : AppCompatActivity() {
         lifecycle.addObserver(GameDisplayObserver(this))
 
         val uri : String? = intent.extras?.getString("uri")
-        Log.i(TAG, "Got $uri")
+        val gameId : String? = intent.extras?.getString("gameId")
+        Log.i(TAG, "Got $uri $gameId")
 
         webView = WebView(this)
         webView.webChromeClient = WebChromeClient()
@@ -46,7 +49,38 @@ class GameDisplayActivity  : AppCompatActivity() {
         setContentView(webView)
         if (uri != null) {
             webView.loadUrl(uri)
+            if (gameId != null) {
+                runBlocking {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val channel = LichessService.StreamConnection.open(gameId)
+                        if (channel != null) {
+                            launch {
+                                LichessService.StreamConnection.readStateStream()
+                            }
+                            launch {
+                                actOnStateStream(channel)
+                            }
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun actOnStateStream(channel: Channel<LichessService.GameState?>) {
+        while (!channel.isClosedForReceive) {
+            val state : LichessService.GameState? = channel.receive()
+            if (state == null) {
+                Log.i(TAG, "null GameState")
+            }
+            else {
+                Log.i(TAG, "status: ${state!!.status}")
+                if (state!!.status == "resign") break
+            }
+        }
+        onStop()
+        finish()
     }
 
     override fun onPause() {
@@ -68,7 +102,7 @@ class GameDisplayActivity  : AppCompatActivity() {
         super.onStop()
         Log.i(TAG, "onStop()")
 
-        webView.setFocusable(true);
+        webView.isFocusable = true;
         webView.removeAllViews();
         webView.clearHistory();
         webView.destroy()
