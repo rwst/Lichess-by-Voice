@@ -46,6 +46,7 @@ object SpeechRecognitionService : ErrorListener {
             model = Model(outputPath)
         } catch (e: IOException) {
             setErrorState(
+
                 "Failed to unpack the model: ${e.message}, $e")
         }
         // TODO: make this a pre-deploy test

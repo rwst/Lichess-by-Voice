@@ -12,8 +12,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import de.lichessbyvoice.ProgressIndicator.hideProgress
-import de.lichessbyvoice.ProgressIndicator.showProgress
 import de.lichessbyvoice.service.AppAuthService
 import de.lichessbyvoice.service.LichessService
 import de.lichessbyvoice.service.SpeechRecognitionService

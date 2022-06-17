@@ -111,13 +111,13 @@ object LichessService {
 
     class GameState(
         val type: String = "gameState",
-        val moves: String = "",
-        val wtime: Int = 0,
-        val btime: Int = 0,
-        val winc: Int = 0,
-        val binc: Int = 0,
         val status: String = "",
-        val winner: String = ""
+//        val moves: String = "",
+//        val wtime: Int = 0,
+//        val btime: Int = 0,
+//        val winc: Int = 0,
+//        val binc: Int = 0,
+//        val winner: String = ""
     )
 
     data class GameData(var nowPlaying: List<GameDataEntry> = emptyList())
@@ -187,7 +187,8 @@ object LichessService {
                 val line = scan.nextLine()
                 if (line != null && line.contains("gameState")) {
                     val obj: GameState = gson.fromJson(line, GameState::class.java)
-                    channel.send(obj)
+                    if (obj.type == "gameState")
+                        channel.send(obj)
                 }
             }
         }
@@ -236,8 +237,10 @@ object LichessService {
         return false
     }
 
+/*
     fun mockChallengeAi(): GameDataEntry {
         Log.i(TAG, "mockChallengeAi()")
         return GameDataEntry(id = "9qigB6bGA5u9")
     }
+*/
 }
