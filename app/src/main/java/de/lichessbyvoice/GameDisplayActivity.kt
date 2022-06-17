@@ -75,11 +75,14 @@ class GameDisplayActivity : AppCompatActivity() {
                 Log.i(TAG, "null GameState")
             } else {
                 Log.i(TAG, "status: ${state.status}")
-                if (state.status == "resign") break
+                if (state.status in listOf("mate", "resign", "draw"))
+                    break
             }
         }
-        onStop()
-        finish()
+        runOnUiThread {
+            onStop()
+            finish()
+        }
     }
 
     override fun onPause() {
