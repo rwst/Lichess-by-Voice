@@ -113,6 +113,7 @@ object SpeechRecognitionService : ErrorListener {
         val intent = Intent(activity, GameDisplayActivity::class.java)
         intent.flags = flags
         intent.putExtra("uri", gameUrl)
+        intent.putExtra("gameId", gameCode)
         activity.startActivity(intent)
     }
 
