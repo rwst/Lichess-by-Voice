@@ -53,7 +53,7 @@ class NewGameActivity : AppCompatActivity() {
         val variantSwitch: SwitchCompat = findViewById(R.id.newgame_variant)
         variantSwitch.isEnabled = true
         variantSwitch.setOnCheckedChangeListener { _, isChecked ->
-            when(isChecked) {
+            when (isChecked) {
                 true -> theGameParams.variant = "chess960"
                 false -> theGameParams.variant = "standard"
             }
@@ -80,7 +80,10 @@ class NewGameActivity : AppCompatActivity() {
 
     private fun go(color: String) {
         theGameParams.color = color
-        Log.i(TAG, "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}")
+        Log.i(
+            TAG,
+            "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}"
+        )
         val model: NewGameViewModel by viewModels()
         model.getGame().observe(this) { }  // TODO
         TheApplication.mainScope.launch {
@@ -97,15 +100,15 @@ class NewGameActivity : AppCompatActivity() {
     private fun newGame() {
         if (newGameCode != null) {
             val intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK
-            SpeechRecognitionService.start(this@NewGameActivity,
+            SpeechRecognitionService.start(
+                this@NewGameActivity,
                 intentFlags,
                 newGameCode!!,
-                newGameColor!!)
+                newGameColor!!
+            )
             Log.i(TAG, "showing game $newGameCode / $newGameColor")
             finish()
-        }
-        else
-        {
+        } else {
             Log.e(TAG, "create game failed")
         }
     }

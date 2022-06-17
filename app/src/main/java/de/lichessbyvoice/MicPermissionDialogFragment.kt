@@ -21,14 +21,16 @@ import androidx.fragment.app.DialogFragment
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class MicPermissionDialogFragment(private val parentActivity: AppCompatActivity) : DialogFragment() {
+class MicPermissionDialogFragment(private val parentActivity: AppCompatActivity) :
+    DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(parentActivity)
             builder.setTitle(R.string.mic_permission_alert)
                 .setMessage(R.string.mic_permission_alert_text)
-                .setPositiveButton(R.string.mic_permission_button
+                .setPositiveButton(
+                    R.string.mic_permission_button
                 ) { dialog, _ ->
                     dialog.dismiss()
                     parentActivity.finish()

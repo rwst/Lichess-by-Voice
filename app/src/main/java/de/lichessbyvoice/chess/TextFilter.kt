@@ -40,7 +40,6 @@ object TextFilter {
         while(true) {
             if (channel.isClosedForReceive) break
             val move = getPossibleMove()
-//            if (move.isLegal())    // TODO: check move before posting, needs scalachess
             val moveOk = LichessService.postBoardMove(move)
             // beep if Lichess says not ok
             if (!moveOk)
@@ -54,6 +53,7 @@ object TextFilter {
         while (true) {
             val textJson = channel.receive()
             val obj = textJson?.let { Json.decodeFromString<Map<String,String>>(it) }
+            // TODO: here we use Kotlin JSON decode, elsewhere Gson
             if ((obj == null
                         || !obj.containsKey("text")
                         || obj["text"] == null) || obj["text"]?.isEmpty() == true)

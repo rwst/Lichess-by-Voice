@@ -73,8 +73,7 @@ class SelectGameActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
-        }
-        else {
+        } else {
             // the activity is opened from AppAuth after OAuth2 first step
             mAuthStateManager.updateAfterAuthorization(resp, ex)
             appAuthService.performTokenRequest(
@@ -119,13 +118,12 @@ class SelectGameActivity : AppCompatActivity() {
                 lastGameButton.isEnabled = true
                 currentGameCode = games.nowPlaying[0].gameId
                 currentGameSide = games.nowPlaying[0].color
-            }
-            else
-            {
+            } else {
                 lastGameButton.isEnabled = false
             }
         }
     }
+
     override fun onResume() {
         super.onResume()
         if (!LichessService.isTokenSet()) {
@@ -170,10 +168,12 @@ class SelectGameActivity : AppCompatActivity() {
 
     private fun lastGame() {
         if (currentGameCode != null) {
-            SpeechRecognitionService.start(this,
+            SpeechRecognitionService.start(
+                this,
                 Intent.FLAG_ACTIVITY_NEW_TASK,
                 currentGameCode!!,
-                currentGameSide!!)
+                currentGameSide!!
+            )
         }
     }
 

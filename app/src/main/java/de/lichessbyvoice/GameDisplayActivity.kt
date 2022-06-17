@@ -26,14 +26,14 @@ import kotlinx.coroutines.channels.Channel
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class GameDisplayActivity  : AppCompatActivity() {
-    private lateinit var webView : WebView
+class GameDisplayActivity : AppCompatActivity() {
+    private lateinit var webView: WebView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(GameDisplayObserver(this))
 
-        val uri : String? = intent.extras?.getString("uri")
-        val gameId : String? = intent.extras?.getString("gameId")
+        val uri: String? = intent.extras?.getString("uri")
+        val gameId: String? = intent.extras?.getString("gameId")
         Log.i(TAG, "Got $uri $gameId")
 
         webView = WebView(this)
@@ -42,8 +42,8 @@ class GameDisplayActivity  : AppCompatActivity() {
         webView.settings.loadWithOverviewMode = true
         webView.settings.useWideViewPort = false
         webView.settings.setSupportZoom(false)
-        webView.settings.setJavaScriptEnabled(true);
-        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE;
+        webView.settings.setJavaScriptEnabled(true)
+        webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
         webView.settings.domStorageEnabled = true
         webView.setBackgroundColor(Color.TRANSPARENT)
         setContentView(webView)
@@ -70,13 +70,12 @@ class GameDisplayActivity  : AppCompatActivity() {
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun actOnStateStream(channel: Channel<LichessService.GameState?>) {
         while (!channel.isClosedForReceive) {
-            val state : LichessService.GameState? = channel.receive()
+            val state: LichessService.GameState? = channel.receive()
             if (state == null) {
                 Log.i(TAG, "null GameState")
-            }
-            else {
-                Log.i(TAG, "status: ${state!!.status}")
-                if (state!!.status == "resign") break
+            } else {
+                Log.i(TAG, "status: ${state.status}")
+                if (state.status == "resign") break
             }
         }
         onStop()
@@ -102,9 +101,9 @@ class GameDisplayActivity  : AppCompatActivity() {
         super.onStop()
         Log.i(TAG, "onStop()")
 
-        webView.isFocusable = true;
-        webView.removeAllViews();
-        webView.clearHistory();
+        webView.isFocusable = true
+        webView.removeAllViews()
+        webView.clearHistory()
         webView.destroy()
     }
 

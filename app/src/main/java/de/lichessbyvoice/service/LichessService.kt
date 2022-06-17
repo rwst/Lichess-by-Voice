@@ -36,7 +36,11 @@ object LichessService {
         theToken = token ?: throw RuntimeException("null token")
 //        Log.i(TAG, "token: $theToken")
     }
-    fun isTokenSet(): Boolean { return this::theToken.isInitialized }
+
+    fun isTokenSet(): Boolean {
+        return this::theToken.isInitialized
+    }
+
     lateinit var currentGameId: String
     val aiGameParamChannel = Channel<AiGameParams>()
     val newGameDataChannel = Channel<GameDataEntry?>()
@@ -59,24 +63,24 @@ object LichessService {
         }
     }
 
-    data class User (
+    data class User(
         val id: String = "",
         val rating: Int = 0,
         val username: String = ""
-        )
+    )
 
-    data class VariantType (
+    data class VariantType(
         val key: String = "",
         val name: String = "",
         val short: String = ""
     )
 
-    data class StatusType (
+    data class StatusType(
         val id: Int = 0,
         val name: String = ""
     )
 
-    data class GameDataEntry (
+    data class GameDataEntry(
         val id: String = "",
         val gameId: String = "",
         val fullId: String = "",
@@ -97,15 +101,15 @@ object LichessService {
         val startedAtTurn: Int = 0,
         val status: StatusType = StatusType(),
         val createdAt: Long = 0,
-   )
+    )
 
-    data class AiGameParams (
+    data class AiGameParams(
         var level: Int,
         var color: String,
         var variant: String
     )
 
-    class GameState (
+    class GameState(
         val type: String = "gameState",
         val moves: String = "",
         val wtime: Int = 0,
@@ -124,7 +128,7 @@ object LichessService {
         @GET("/api/account/playing")
         suspend fun getAccountPlaying(
             @Header("Authorization") token: String
-        ) : Response<GameData>
+        ): Response<GameData>
     }
 
     interface ChallengeAiApi {
@@ -135,7 +139,7 @@ object LichessService {
             @Field("level") level: Int,
             @Field("variant") variant: String,
             @Field("color") color: String
-        ) : Response<GameDataEntry>
+        ): Response<GameDataEntry>
     }
 
     interface BoardMoveApi { // TODO: draw offer/agree
@@ -146,17 +150,17 @@ object LichessService {
             @Path("gameId") gameId: String,
             @Path("move") move: String,
             @Field("offeringDraw") draw: Boolean
-        ) : Response<MoveResponse>
+        ): Response<MoveResponse>
     }
 
     object StreamConnection {
-        private lateinit var conn : HttpsURLConnection
+        private lateinit var conn: HttpsURLConnection
         private lateinit var channel: Channel<GameState?>
         private const val TAG = "StreamConnection"
-        fun open(gameId: String) : Channel<GameState?>? {
+        fun open(gameId: String): Channel<GameState?>? {
             val url = URL("https://lichess.org/api/board/game/stream/${gameId}")
             conn = url.openConnection() as HttpsURLConnection
-            conn.setRequestProperty ("Authorization", "Bearer $theToken")
+            conn.setRequestProperty("Authorization", "Bearer $theToken")
             conn.requestMethod = "GET"
             conn.readTimeout = 60 * 1000
             conn.connectTimeout = 60 * 1000
@@ -179,10 +183,10 @@ object LichessService {
             val scan = Scanner(conn.inputStream)
             val gson = Gson()
 
-            while(scan.hasNextLine()) {
+            while (scan.hasNextLine()) {
                 val line = scan.nextLine()
                 if (line != null && line.contains("gameState")) {
-                    val obj : GameState = gson.fromJson(line, GameState::class.java)
+                    val obj: GameState = gson.fromJson(line, GameState::class.java)
                     channel.send(obj)
                 }
             }
@@ -202,10 +206,12 @@ object LichessService {
 
     suspend fun postChallengeAi(params: AiGameParams): GameDataEntry? {
         val challengeAiApi = RetrofitHelper.getInstance().create(ChallengeAiApi::class.java)
-        val result = challengeAiApi.postChallengeAi("Bearer $theToken",
+        val result = challengeAiApi.postChallengeAi(
+            "Bearer $theToken",
             params.level,
             params.variant,
-            params.color)
+            params.color
+        )
         if (result.isSuccessful) {
             Log.i(TAG, result.body().toString())
             return result.body()
@@ -216,10 +222,12 @@ object LichessService {
 
     suspend fun postBoardMove(move: String): Boolean {
         val boardMoveApi = RetrofitHelper.getInstance().create(BoardMoveApi::class.java)
-        val result = boardMoveApi.boardMove("Bearer $theToken",
+        val result = boardMoveApi.boardMove(
+            "Bearer $theToken",
             currentGameId,
             move,
-        false)
+            false
+        )
         if (result.isSuccessful) {
             Log.i(TAG, "move $move sent ok")
             return true
