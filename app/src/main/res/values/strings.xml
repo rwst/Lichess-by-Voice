@@ -11,10 +11,10 @@
         <li>For castling specify the King move. Examples: <b>e1g1</b> or <b>e8c8</b>.</li>
             <li>Promoting a pawn on last rank, you add the name of the piece. Examples: <b>a7a8 Queen</b> or <b>b2b1 Rook</b>. Omitting the piece will make it a Queen.</li></ul></p>
         <h3>Continuing a game</h3>
-        <p>In this version you can continue the game in your Lichess ongoing game list that has waited the longest. Choosing from the list will be implemented in a later version.</p>]]>
+        <p>In this version you can continue the game in your Lichess ongoing game list that has waited the longest. Choosing from the list will be implemented in a later version.</p>
         <h3>Privacy</h3>
         <p>No audio samples are saved to media or transferred over the net. Usage of a specific chess grammar ensures that every recognition result that is not a chess move is ignored by the app.
-        The relevant source code is in de.lichessbyvoice.chess.ChessGrammar and ...TextFilter</p>
+        The relevant source code is in de.lichessbyvoice.chess.ChessGrammar and ...TextFilter</p>]]>
     </string>
     <string name="about_textview">Lichess By Voice---Version: XXX_VERSION_XXX</string>
     <string name="main_button">New Game</string>
