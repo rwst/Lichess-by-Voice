@@ -69,8 +69,9 @@ class GameDisplayActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun actOnStateStream(channel: Channel<LichessService.GameState?>) {
+        var state: LichessService.GameState? = null
         while (!channel.isClosedForReceive) {
-            val state: LichessService.GameState? = channel.receive()
+            state = channel.receive()
             if (state == null) {
                 Log.i(TAG, "null GameState")
             } else {
@@ -80,8 +81,18 @@ class GameDisplayActivity : AppCompatActivity() {
             }
         }
         runOnUiThread {
-            onStop()
-            finish()
+            val newFragment = AlertDialogFragment(
+                this,
+                R.string.game_finished_alert,
+                when (state?.status) {
+                    "mate" -> R.string.game_finished_alert_text_mate
+                    "draw" -> R.string.game_finished_alert_text_draw
+                    "resign" -> R.string.game_finished_alert_text_resign
+                    else -> R.string.game_finished_alert
+                },
+                R.string.back_button
+            )
+            newFragment.show(supportFragmentManager, null)
         }
     }
 

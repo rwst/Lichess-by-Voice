@@ -14,7 +14,7 @@
         <p>In this version you can continue the game in your Lichess ongoing game list that has waited the longest. Choosing from the list will be implemented in a later version.</p>
         <h3>Privacy</h3>
         <p>No audio samples are saved to media or transferred over the net. Usage of a specific chess grammar ensures that every recognition result that is not a chess move is ignored by the app.
-        The relevant source code is in de.lichessbyvoice.chess.ChessGrammar and ...TextFilter</p>]]>
+        The relevant source code is in de.lichessbyvoice.chess.ChessGrammar and …TextFilter</p>]]>
     </string>
     <string name="about_textview">Lichess By Voice---Version: XXX_VERSION_XXX</string>
     <string name="main_button">New Game</string>
@@ -42,5 +42,10 @@
     <string name="exit_app_button">Exit app</string>
     <string name="null_model_alert">Speech model initialization failed</string>
     <string name="null_model_alert_text">Please report at https://github.com/rwst/Lichess-by-Voice/issues</string>
+    <string name="game_finished_alert">Game finished</string>
+    <string name="game_finished_alert_text_mate">Reason: Checkmate</string>
+    <string name="game_finished_alert_text_draw">Reason: Draw</string>
+    <string name="game_finished_alert_text_resign">Reason: Resign</string>
+    <string name="back_button">Back</string>
     <string name="textview">TextView</string>
 </resources>
