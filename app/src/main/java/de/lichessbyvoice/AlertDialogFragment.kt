@@ -21,15 +21,18 @@ import androidx.fragment.app.DialogFragment
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class NullModelDialogFragment(private val parentActivity: AppCompatActivity) : DialogFragment() {
+class AlertDialogFragment(
+    private val parentActivity: AppCompatActivity,
+    private val title: Int, private val message: Int, private val buttonText: Int
+) :
+    DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(parentActivity)
-            builder.setTitle(R.string.null_model_alert)
-                .setMessage(R.string.null_model_alert_text)
-                .setPositiveButton(R.string.mic_permission_button)
-                { dialog, _ ->
+            builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(buttonText) { dialog, _ ->
                     dialog.dismiss()
                     parentActivity.finish()
                 }

@@ -182,7 +182,12 @@ class SelectGameActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                val newFragment = MicPermissionDialogFragment(this)
+                val newFragment = AlertDialogFragment(
+                    this,
+                    R.string.mic_permission_alert,
+                    R.string.mic_permission_alert_text,
+                    R.string.exit_app_button
+                )
                 newFragment.show(supportFragmentManager, null)
             }
         }

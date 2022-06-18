@@ -4,10 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import de.lichessbyvoice.AlertDialogFragment
 import de.lichessbyvoice.GameDisplayActivity
-import de.lichessbyvoice.NullModelDialogFragment
-import de.lichessbyvoice.chess.TextFilter
+import de.lichessbyvoice.R
 import de.lichessbyvoice.chess.ChessGrammar
+import de.lichessbyvoice.chess.TextFilter
 import de.lichessbyvoice.vosk.ErrorListener
 import de.lichessbyvoice.vosk.SpeechService
 import kotlinx.coroutines.channels.Channel
@@ -104,7 +105,12 @@ object SpeechRecognitionService : ErrorListener {
         if (model == null) {
             initModel(activity)  // TODO: move this to app start
             if (model == null) {
-                val newFragment = NullModelDialogFragment(activity)
+                val newFragment = AlertDialogFragment(
+                    activity,
+                    R.string.null_model_alert,
+                    R.string.null_model_alert_text,
+                    R.string.exit_app_button
+                )
                 newFragment.show(activity.supportFragmentManager, null)
                 return
             }
