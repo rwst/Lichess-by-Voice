@@ -3,6 +3,7 @@ package de.lichessbyvoice
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -36,7 +37,9 @@ class GameDisplayActivity : AppCompatActivity() {
         val gameId: String? = intent.extras?.getString("gameId")
         Log.i(TAG, "Got $uri $gameId")
 
-        webView = WebView(this)
+        setContentView(R.layout.displaygame_activity)
+
+        webView = findViewById(R.id.webview)
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = WebViewClient()
         webView.settings.loadWithOverviewMode = true
@@ -46,7 +49,6 @@ class GameDisplayActivity : AppCompatActivity() {
         webView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
         webView.settings.domStorageEnabled = true
         webView.setBackgroundColor(Color.TRANSPARENT)
-        setContentView(webView)
         if (uri != null) {
             webView.loadUrl(uri)
             if (gameId != null) {
@@ -115,9 +117,8 @@ class GameDisplayActivity : AppCompatActivity() {
         super.onStop()
         Log.i(TAG, "onStop()")
 
-        webView.isFocusable = true
-        webView.removeAllViews()
-        webView.clearHistory()
+        val webViewContainer: ViewGroup = findViewById(R.id.layout_webview)
+        webViewContainer.removeView(webView)
         webView.destroy()
     }
 
