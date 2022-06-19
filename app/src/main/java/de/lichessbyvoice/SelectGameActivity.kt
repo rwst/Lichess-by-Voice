@@ -8,13 +8,17 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.lichessbyvoice.service.AppAuthService
 import de.lichessbyvoice.service.LichessService
 import de.lichessbyvoice.service.SpeechRecognitionService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauthdemo.AuthStateManager
@@ -49,8 +53,6 @@ class SelectGameActivity : AppCompatActivity() {
         val lastGameButton: Button = findViewById(R.id.lastgame_button)
         lastGameButton.isEnabled = (currentGameCode != null)
         val helpButton: Button = findViewById(R.id.help_button)
-        ProgressIndicator.setShowFunc { showProgress() }
-        ProgressIndicator.setHideFunc { hideProgress() }
         hideProgress()
 
         val resp = AuthorizationResponse.fromIntent(intent)
@@ -107,17 +109,26 @@ class SelectGameActivity : AppCompatActivity() {
     private fun setCurrentGame() {
         Log.i(TAG, "setCurrentGame()")
         val lastGameButton: Button = findViewById(R.id.lastgame_button)
-        val model: ActiveGamesViewModel by viewModels()
-        model.getGames().observe(this) { games ->
-            if (games != null && games.nowPlaying.isNotEmpty()) {
-                games.nowPlaying.forEach {
-                    Log.i(TAG, "currentGame: ${it.gameId} ismyturn: ${it.fen}")
+        runBlocking {
+            val channel = Channel<LichessService.GameData?>()
+            showProgress()
+            CoroutineScope(Dispatchers.IO).launch {
+                val games = LichessService.getSuspendedGames()
+                channel.send(games)
+            }
+            launch {
+                val games = channel.receive()
+                if (games != null && games.nowPlaying.isNotEmpty()) {
+                    games.nowPlaying.forEach {
+                        Log.i(TAG, "currentGame: ${it.gameId} ismyturn: ${it.fen}")
+                    }
+                    lastGameButton.isEnabled = true
+                    currentGameCode = games.nowPlaying[0].gameId
+                    currentGameSide = games.nowPlaying[0].color
+                } else {
+                    lastGameButton.isEnabled = false
                 }
-                lastGameButton.isEnabled = true
-                currentGameCode = games.nowPlaying[0].gameId
-                currentGameSide = games.nowPlaying[0].color
-            } else {
-                lastGameButton.isEnabled = false
+                hideProgress()
             }
         }
     }
