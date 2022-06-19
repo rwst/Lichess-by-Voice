@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.forEach
@@ -14,7 +13,11 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import de.lichessbyvoice.service.LichessService
 import de.lichessbyvoice.service.SpeechRecognitionService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 // Copyright 2022 Ralf Stephan
 //
@@ -73,8 +76,6 @@ class NewGameActivity : AppCompatActivity() {
         startRandom.setOnClickListener { go("random") }
         val startBlack: Button = findViewById(R.id.newgame_color_black)
         startBlack.setOnClickListener { go("black") }
-        ProgressIndicator.setShowFunc { showProgress() }
-        ProgressIndicator.setHideFunc { hideProgress() }
         hideProgress()
     }
 
@@ -84,14 +85,20 @@ class NewGameActivity : AppCompatActivity() {
             TAG,
             "Start game, variant: ${theGameParams.variant}, level: ${theGameParams.level}, color: ${theGameParams.color}"
         )
-        val model: NewGameViewModel by viewModels()
-        model.getGame().observe(this) { }  // TODO
-        TheApplication.mainScope.launch {
-            LichessService.aiGameParamChannel.send(theGameParams)
-            val newGame = LichessService.newGameDataChannel.receive()
-            if (newGame != null) {
-                newGameCode = newGame.id
-                newGameColor = newGame.color
+        runBlocking {
+            showProgress()
+            val channel = Channel<LichessService.GameDataEntry?>()
+            CoroutineScope(Dispatchers.IO).launch {
+                val newGame = LichessService.postChallengeAi(theGameParams)
+                channel.send(newGame)
+            }
+            launch {
+                val newGame = channel.receive()
+                if (newGame != null) {
+                    newGameCode = newGame.id
+                    newGameColor = newGame.color
+                }
+                hideProgress()
                 newGame()
             }
         }

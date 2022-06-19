@@ -42,8 +42,6 @@ object LichessService {
     }
 
     lateinit var currentGameId: String
-    val aiGameParamChannel = Channel<AiGameParams>()
-    val newGameDataChannel = Channel<GameDataEntry?>()
 
     // TODO: reproduce and test no internet; catch java.net.SocketTimeoutException
 
