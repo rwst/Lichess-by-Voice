@@ -43,8 +43,6 @@ object LichessService {
 
     lateinit var currentGameId: String
 
-    // TODO: reproduce and test no internet; catch java.net.SocketTimeoutException
-
     object RetrofitHelper {
 
         private const val baseUrl = "https://lichess.org/"

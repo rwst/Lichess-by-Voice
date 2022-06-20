@@ -22,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauthdemo.AuthStateManager
+import java.io.IOException
 
 // Copyright 2022 Ralf Stephan
 //
@@ -110,23 +111,38 @@ class SelectGameActivity : AppCompatActivity() {
         Log.i(TAG, "setCurrentGame()")
         val lastGameButton: Button = findViewById(R.id.lastgame_button)
         runBlocking {
-            val channel = Channel<LichessService.GameData?>()
+            val channel = Channel<Any?>()
             showProgress()
             CoroutineScope(Dispatchers.IO).launch {
-                val games = LichessService.getSuspendedGames()
-                channel.send(games)
+                val obj: Any? = try {
+                    LichessService.getSuspendedGames()
+                } catch (e : Throwable) {
+                    e
+                }
+                channel.send(obj)
             }
             launch {
-                val games = channel.receive()
-                if (games != null && games.nowPlaying.isNotEmpty()) {
-                    games.nowPlaying.forEach {
-                        Log.i(TAG, "currentGame: ${it.gameId} ismyturn: ${it.fen}")
+                when (val obj = channel.receive()) {
+                    null -> lastGameButton.isEnabled = false
+                    is LichessService.GameData -> {
+                        if (obj.nowPlaying.isNotEmpty()) {
+                            obj.nowPlaying.forEach {
+                                Log.i(TAG, "currentGame: ${it.gameId} ismyturn: ${it.fen}")
+                            }
+                            lastGameButton.isEnabled = true
+                            currentGameCode = obj.nowPlaying[0].gameId
+                            currentGameSide = obj.nowPlaying[0].color
+                        }
                     }
-                    lastGameButton.isEnabled = true
-                    currentGameCode = games.nowPlaying[0].gameId
-                    currentGameSide = games.nowPlaying[0].color
-                } else {
-                    lastGameButton.isEnabled = false
+                    is IOException -> {
+                        val newFragment = AlertDialogFragment(
+                            this@SelectGameActivity,
+                            R.string.no_connection_alert,
+                            R.string.no_connection_alert_text,
+                            R.string.exit_app_button
+                        )
+                        newFragment.show(supportFragmentManager, null)
+                    }
                 }
                 hideProgress()
             }
