@@ -10,6 +10,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.io.IOException
 import java.net.URL
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
@@ -151,16 +152,22 @@ object LichessService {
 
     object StreamConnection {
         private lateinit var conn: HttpsURLConnection
-        private lateinit var channel: Channel<GameState?>
+        private lateinit var channel: Channel<Any?>
         private const val TAG = "StreamConnection"
-        fun open(gameId: String): Channel<GameState?>? {
+        fun open(gameId: String): Channel<Any?>? {
             val url = URL("https://lichess.org/api/board/game/stream/${gameId}")
             conn = url.openConnection() as HttpsURLConnection
             conn.setRequestProperty("Authorization", "Bearer $theToken")
             conn.requestMethod = "GET"
             conn.readTimeout = 60 * 1000
             conn.connectTimeout = 60 * 1000
-            conn.connect()
+            try {
+                conn.connect()
+            }
+            catch (e : IOException)
+            {
+                return null
+            }
             val responseCode = conn.responseCode
             if (responseCode != 200) {
                 Log.i(TAG, "response: ${conn.responseCode} ${conn.responseMessage}")
@@ -176,16 +183,22 @@ object LichessService {
         }
 
         suspend fun readStateStream() {
-            val scan = Scanner(conn.inputStream)
-            val gson = Gson()
+            try {
+                val scan = Scanner(conn.inputStream)
+                val gson = Gson()
 
-            while (scan.hasNextLine()) {
-                val line = scan.nextLine()
-                if (line != null && line.contains("gameState")) {
-                    val obj: GameState = gson.fromJson(line, GameState::class.java)
-                    if (obj.type == "gameState")
-                        channel.send(obj)
+                while (scan.hasNextLine()) {
+                    val line = scan.nextLine()
+                    if (line != null && line.contains("gameState")) {
+                        val obj: GameState = gson.fromJson(line, GameState::class.java)
+                        if (obj.type == "gameState")
+                            channel.send(obj)
+                    }
                 }
+            }
+            catch (e : IOException)
+            {
+                channel.send(e)
             }
         }
     }

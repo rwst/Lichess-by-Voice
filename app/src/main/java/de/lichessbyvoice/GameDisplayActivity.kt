@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import de.lichessbyvoice.service.LichessService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import java.io.IOException
 
 // Copyright 2022 Ralf Stephan
 //
@@ -63,6 +64,17 @@ class GameDisplayActivity : AppCompatActivity() {
                                 actOnStateStream(channel)
                             }
                         }
+                        else {
+                            runOnUiThread {
+                                val newFragment = AlertDialogFragment(
+                                    this@GameDisplayActivity,
+                                    R.string.no_connection_alert,
+                                    R.string.no_connection_alert_text,
+                                    R.string.exit_app_button
+                                )
+                                newFragment.show(supportFragmentManager, null)
+                            }
+                        }
                     }
                 }
             }
@@ -70,31 +82,46 @@ class GameDisplayActivity : AppCompatActivity() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun actOnStateStream(channel: Channel<LichessService.GameState?>) {
-        var state: LichessService.GameState? = null
+    private suspend fun actOnStateStream(channel: Channel<Any?>) {
+        var state: Any?
         while (!channel.isClosedForReceive) {
             state = channel.receive()
-            if (state == null) {
-                Log.i(TAG, "null GameState")
-            } else {
-                Log.i(TAG, "status: ${state.status}")
-                if (state.status in listOf("mate", "resign", "draw"))
-                    break
+            when (state) {
+                null -> Log.i(TAG, "null GameState")
+                is LichessService.GameState -> {
+                    Log.i(TAG, "status: ${state.status}")
+                    if (state.status in listOf("mate", "resign", "draw"))
+                        runOnUiThread {
+                            val newFragment = AlertDialogFragment(
+                                this,
+                                R.string.game_finished_alert,
+                                when (state.status) {
+                                    "mate" -> R.string.game_finished_alert_text_mate
+                                    "draw" -> R.string.game_finished_alert_text_draw
+                                    "resign" -> R.string.game_finished_alert_text_resign
+                                    else -> R.string.game_finished_alert
+                                },
+                                R.string.back_button
+                            )
+                            newFragment.show(supportFragmentManager, null)
+                            onStop()
+                            finish()
+                            return@runOnUiThread
+                        }
+                }
+                is IOException -> {
+                    val newFragment = AlertDialogFragment(
+                        this,
+                        R.string.no_connection_alert,
+                        R.string.no_connection_alert_text,
+                        R.string.back_button
+                    )
+                    newFragment.show(supportFragmentManager, null)
+                    onStop()
+                    finish()
+                    return
+                }
             }
-        }
-        runOnUiThread {
-            val newFragment = AlertDialogFragment(
-                this,
-                R.string.game_finished_alert,
-                when (state?.status) {
-                    "mate" -> R.string.game_finished_alert_text_mate
-                    "draw" -> R.string.game_finished_alert_text_draw
-                    "resign" -> R.string.game_finished_alert_text_resign
-                    else -> R.string.game_finished_alert
-                },
-                R.string.back_button
-            )
-            newFragment.show(supportFragmentManager, null)
         }
     }
 
