@@ -73,6 +73,7 @@ class GameDisplayActivity : AppCompatActivity() {
                                     R.string.exit_app_button
                                 )
                                 newFragment.show(supportFragmentManager, null)
+                                destroyWebview()
                             }
                         }
                     }
@@ -105,6 +106,7 @@ class GameDisplayActivity : AppCompatActivity() {
                             )
                             newFragment.show(supportFragmentManager, null)
                             onStop()
+                            destroyWebview()
                             finish()
                             return@runOnUiThread
                         }
@@ -118,6 +120,7 @@ class GameDisplayActivity : AppCompatActivity() {
                     )
                     newFragment.show(supportFragmentManager, null)
                     onStop()
+                    destroyWebview()
                     finish()
                     return
                 }
@@ -143,7 +146,9 @@ class GameDisplayActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         Log.i(TAG, "onStop()")
+    }
 
+    fun destroyWebview() {
         val webViewContainer: ViewGroup = findViewById(R.id.layout_webview)
         webViewContainer.removeView(webView)
         webView.destroy()
