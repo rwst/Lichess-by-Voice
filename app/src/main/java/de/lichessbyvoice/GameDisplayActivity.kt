@@ -10,6 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import de.lichessbyvoice.service.LichessService
+import de.lichessbyvoice.service.SpeechRecognitionService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.io.IOException
@@ -32,7 +33,6 @@ class GameDisplayActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(GameDisplayObserver(this))
 
         val uri: String? = intent.extras?.getString("uri")
         val gameId: String? = intent.extras?.getString("gameId")
@@ -76,6 +76,14 @@ class GameDisplayActivity : AppCompatActivity() {
                                 destroyWebview()
                             }
                         }
+                    }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        delay(2000L)
+                        SpeechRecognitionService.recognizeMicrophone(this@GameDisplayActivity)
+                    }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        delay(2000L)
+                        de.lichessbyvoice.chess.TextFilter.start()
                     }
                 }
             }
@@ -130,25 +138,29 @@ class GameDisplayActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        SpeechRecognitionService.pause(true)
         Log.i(TAG, "onPause()")
     }
 
     override fun onResume() {
         super.onResume()
+        SpeechRecognitionService.pause(false)
         Log.i(TAG, "onResume()")
     }
 
     override fun onStart() {
         super.onStart()
+        SpeechRecognitionService.pause(false)
         Log.i(TAG, "onStart()")
     }
 
     override fun onStop() {
         super.onStop()
+        SpeechRecognitionService.pause(true)
         Log.i(TAG, "onStop()")
     }
 
-    fun destroyWebview() {
+    private fun destroyWebview() {
         val webViewContainer: ViewGroup = findViewById(R.id.layout_webview)
         webViewContainer.removeView(webView)
         webView.destroy()
