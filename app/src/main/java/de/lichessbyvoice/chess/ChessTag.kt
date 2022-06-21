@@ -40,10 +40,10 @@ val ROW_8 = RowTag("8")
 
 class PieceTag(str: String) : ChessTag(str)
 
-val KNIGHT = PieceTag("N")
-val BISHOP = PieceTag("B")
-val ROOK = PieceTag("R")
-val QUEEN = PieceTag("Q")
+val KNIGHT = PieceTag("n")
+val BISHOP = PieceTag("b")
+val ROOK = PieceTag("r")
+val QUEEN = PieceTag("q")
 
 val fileTags = listOf(A_FILE, B_FILE, C_FILE, D_FILE, E_FILE, F_FILE, G_FILE, H_FILE)
 val rowTags = listOf(ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8)
