@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.lichessbyvoice.service.AppAuthService
@@ -38,7 +37,7 @@ import java.io.IOException
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class SelectGameActivity : AppCompatActivity() {
+class SelectGameActivity : FinishableActivity() {
     private lateinit var mAuthStateManager: AuthStateManager
     private lateinit var appAuthService: AppAuthService
     private var currentGameCode: String? = null
@@ -218,6 +217,9 @@ class SelectGameActivity : AppCompatActivity() {
                 newFragment.show(supportFragmentManager, null)
             }
         }
+    }
+
+    override fun doFinish() {
     }
 
 /*

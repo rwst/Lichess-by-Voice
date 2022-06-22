@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import de.lichessbyvoice.AlertDialogFragment
+import de.lichessbyvoice.FinishableActivity
 import de.lichessbyvoice.GameDisplayActivity
 import de.lichessbyvoice.R
 import de.lichessbyvoice.chess.ChessGrammar
@@ -96,7 +97,7 @@ object SpeechRecognitionService : ErrorListener {
     }
 
     fun start(
-        activity: AppCompatActivity,
+        activity: FinishableActivity,
         flags: Int,
         gameCode: String,
         gameColor: String,

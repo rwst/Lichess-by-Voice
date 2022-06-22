@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.forEach
 import com.google.android.material.button.MaterialButton
@@ -34,7 +33,7 @@ import java.io.IOException
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class NewGameActivity : AppCompatActivity() {
+class NewGameActivity : FinishableActivity() {
     private var theGameParams = LichessService.AiGameParams(1, "random", "standard")
     private var newGameCode: String? = null
     private var newGameColor: String? = null
@@ -78,6 +77,10 @@ class NewGameActivity : AppCompatActivity() {
         val startBlack: Button = findViewById(R.id.newgame_color_black)
         startBlack.setOnClickListener { go("black") }
         hideProgress()
+    }
+
+    override fun doFinish() {
+        finish()
     }
 
     private fun go(color: String) {

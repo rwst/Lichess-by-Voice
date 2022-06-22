@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 
 // Copyright 2022 Ralf Stephan
@@ -22,7 +21,7 @@ import androidx.fragment.app.DialogFragment
 // limitations under the License.
 
 class AlertDialogFragment(
-    private val parentActivity: AppCompatActivity,
+    private val parentActivity: FinishableActivity,
     private val title: Int, private val message: Int, private val buttonText: Int
 ) :
     DialogFragment() {
@@ -34,7 +33,7 @@ class AlertDialogFragment(
                 .setMessage(message)
                 .setPositiveButton(buttonText) { dialog, _ ->
                     dialog.dismiss()
-                    parentActivity.finish()
+                    parentActivity.doFinish()
                 }
             // Create the AlertDialog object and return it
             builder.create()
@@ -43,6 +42,6 @@ class AlertDialogFragment(
 
     override fun onDismiss(dialog: DialogInterface) {
         dialog.dismiss()
-        parentActivity.finish()
+        parentActivity.doFinish()
     }
 }
