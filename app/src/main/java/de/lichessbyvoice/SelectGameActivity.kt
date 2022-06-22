@@ -220,15 +220,8 @@ class SelectGameActivity : FinishableActivity() {
     }
 
     override fun doFinish() {
+        finish()
     }
-
-/*
-    override fun onDestroy() {
-        super.onDestroy()
-        TheApplication.mainScope.cancel()
-        SpeechRecognitionService.destroy()
-    }
-*/
 
     companion object {
         private const val TAG = "SelectGameActivity"
