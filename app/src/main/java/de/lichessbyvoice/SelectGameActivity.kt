@@ -58,7 +58,7 @@ class SelectGameActivity : FinishableActivity() {
         val resp = AuthorizationResponse.fromIntent(intent)
         val ex = AuthorizationException.fromIntent(intent)
         Log.i(TAG, "resp:$resp, ex:$ex")
-        if (resp == null) {
+        if (resp == null || LichessService.isTokenSet()) {
             // the activity is opened normally
             if (mAuthStateManager.isAuthorized()) {
                 LichessService.setToken(mAuthStateManager.current.accessToken)
