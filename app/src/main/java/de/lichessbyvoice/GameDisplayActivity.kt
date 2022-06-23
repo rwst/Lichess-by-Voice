@@ -88,7 +88,20 @@ class GameDisplayActivity : FinishableActivity() {
                     }
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(2000L)
-                        de.lichessbyvoice.chess.TextFilter.start()
+                        try {
+                            de.lichessbyvoice.chess.TextFilter.start()
+                        }
+                        catch (e : IOException) {
+                            runOnUiThread {
+                                val newFragment = AlertDialogFragment(
+                                    this@GameDisplayActivity,
+                                    R.string.no_connection_alert,
+                                    R.string.no_connection_alert_text,
+                                    R.string.exit_app_button
+                                )
+                                newFragment.show(supportFragmentManager, null)
+                            }
+                        }
                     }
                 }
             }
