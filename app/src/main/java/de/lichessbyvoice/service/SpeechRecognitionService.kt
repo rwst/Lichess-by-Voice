@@ -3,7 +3,6 @@ package de.lichessbyvoice.service
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import de.lichessbyvoice.AlertDialogFragment
 import de.lichessbyvoice.FinishableActivity
 import de.lichessbyvoice.GameDisplayActivity

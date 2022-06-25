@@ -35,7 +35,6 @@ object LichessService {
     private lateinit var theToken: String
     fun setToken(token: String?) {
         theToken = token ?: throw RuntimeException("null token")
-//        Log.i(TAG, "token: $theToken")
     }
 
     fun isTokenSet(): Boolean {
@@ -109,12 +108,6 @@ object LichessService {
     class GameState(
         val type: String = "gameState",
         val status: String = "",
-//        val moves: String = "",
-//        val wtime: Int = 0,
-//        val btime: Int = 0,
-//        val winc: Int = 0,
-//        val binc: Int = 0,
-//        val winner: String = ""
     )
 
     data class GameData(var nowPlaying: List<GameDataEntry> = emptyList())
@@ -245,11 +238,4 @@ object LichessService {
         Log.i(TAG, "move $move rejected")
         return false
     }
-
-/*
-    fun mockChallengeAi(): GameDataEntry {
-        Log.i(TAG, "mockChallengeAi()")
-        return GameDataEntry(id = "9qigB6bGA5u9")
-    }
-*/
 }

@@ -2,12 +2,10 @@ package de.lichessbyvoice
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.method.ScrollingMovementMethod
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 
 // Copyright 2022 Ralf Stephan
@@ -25,7 +23,6 @@ import androidx.appcompat.app.AppCompatActivity
 // limitations under the License.
 
 class HelpActivity : AppCompatActivity() {
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.help_activity)
