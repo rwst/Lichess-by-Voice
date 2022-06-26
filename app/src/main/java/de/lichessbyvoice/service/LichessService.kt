@@ -1,8 +1,9 @@
 package de.lichessbyvoice.service
 
 import android.util.Log
-import com.google.gson.Gson
 import kotlinx.coroutines.channels.Channel
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -178,12 +179,11 @@ object LichessService {
         suspend fun readStateStream() {
             try {
                 val scan = Scanner(conn.inputStream)
-                val gson = Gson()
 
                 while (scan.hasNextLine()) {
                     val line = scan.nextLine()
                     if (line != null && line.contains("gameState")) {
-                        val obj: GameState = gson.fromJson(line, GameState::class.java)
+                        val obj: GameState = Json.decodeFromString(line)
                         if (obj.type == "gameState")
                             channel.send(obj)
                     }
