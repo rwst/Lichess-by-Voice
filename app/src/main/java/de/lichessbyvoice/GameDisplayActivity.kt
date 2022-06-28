@@ -117,23 +117,19 @@ class GameDisplayActivity : FinishableActivity() {
                 null -> Log.i(TAG, "null GameState")
                 is LichessService.GameState -> {
                     Log.i(TAG, "status: ${state.status}")
-                    if (state.status in listOf("mate", "resign", "draw"))
-                        // TODO: move lichess specific game status strings into LichessService
-                        runOnUiThread {
-                            val newFragment = AlertDialogFragment(
-                                this,
-                                R.string.game_finished_alert,
-                                when (state.status) {
-                                    "mate" -> R.string.game_finished_alert_text_mate
-                                    "draw" -> R.string.game_finished_alert_text_draw
-                                    "resign" -> R.string.game_finished_alert_text_resign
-                                    else -> R.string.game_finished_alert
-                                },
-                                R.string.back_button
-                            )
-                            newFragment.show(supportFragmentManager, null)
-                            return@runOnUiThread
-                        }
+                    var dialogString = LichessService.statusToDialog(state.status)
+                    if (dialogString == null)
+                        dialogString = R.string.game_finished_alert
+                    runOnUiThread {
+                        val newFragment = AlertDialogFragment(
+                            this,
+                            R.string.game_finished_alert,
+                            dialogString,
+                            R.string.back_button
+                        )
+                        newFragment.show(supportFragmentManager, null)
+                        return@runOnUiThread
+                    }
                 }
                 is IOException -> {
                     val newFragment = AlertDialogFragment(

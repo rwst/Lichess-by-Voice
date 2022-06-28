@@ -1,6 +1,7 @@
 package de.lichessbyvoice.service
 
 import android.util.Log
+import de.lichessbyvoice.R
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -237,5 +238,14 @@ object LichessService {
         }
         Log.i(TAG, "move $move rejected")
         return false
+    }
+
+    fun statusToDialog(str : String) : Int? {
+        val map = mapOf(
+            "mate" to R.string.game_finished_alert_text_mate,
+            "draw" to R.string.game_finished_alert_text_draw,
+            "resign" to R.string.game_finished_alert_text_resign
+        )
+        return map[str]
     }
 }
