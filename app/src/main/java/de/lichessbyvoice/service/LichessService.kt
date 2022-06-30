@@ -3,6 +3,7 @@ package de.lichessbyvoice.service
 import android.util.Log
 import de.lichessbyvoice.R
 import kotlinx.coroutines.channels.Channel
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -107,6 +108,7 @@ object LichessService {
         var variant: String
     )
 
+    @Serializable
     class GameState(
         val type: String = "gameState",
         val status: String = "",
@@ -178,13 +180,14 @@ object LichessService {
         }
 
         suspend fun readStateStream() {
+            val format = Json { ignoreUnknownKeys = true }
             try {
                 val scan = Scanner(conn.inputStream)
 
                 while (scan.hasNextLine()) {
                     val line = scan.nextLine()
                     if (line != null && line.contains("gameState")) {
-                        val obj: GameState = Json.decodeFromString(line)
+                        val obj: GameState = format.decodeFromString(line)
                         if (obj.type == "gameState")
                             channel.send(obj)
                     }
