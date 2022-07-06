@@ -3,6 +3,7 @@ package de.lichessbyvoice
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -53,6 +54,7 @@ class SelectGameActivity : FinishableActivity() {
         val lastGameButton: Button = findViewById(R.id.lastgame_button)
         lastGameButton.isEnabled = (currentGameCode != null)
         val helpButton: Button = findViewById(R.id.help_button)
+        val privacyButton: Button = findViewById(R.id.privacy_button)
         hideProgress()
 
         val resp = AuthorizationResponse.fromIntent(intent)
@@ -65,6 +67,7 @@ class SelectGameActivity : FinishableActivity() {
                 newGameButton.setOnClickListener { newGame() }
                 lastGameButton.setOnClickListener { lastGame() }
                 helpButton.setOnClickListener { help() }
+                privacyButton.setOnClickListener { privacy() }
                 setCurrentGame()
             } else {
                 Log.i(TAG, "authorization missing")
@@ -183,6 +186,14 @@ class SelectGameActivity : FinishableActivity() {
     private fun help() {
         val intent = Intent(this, HelpActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun privacy() {
+        val webpage: Uri = Uri.parse("https://lichessbyvoice.de/privacy.html")
+        val intent = Intent(Intent.ACTION_VIEW, webpage)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        }
     }
 
     private fun newGame() {
