@@ -23,8 +23,8 @@ android {
         applicationId "de.lichessbyvoice"
         minSdk 26
         targetSdk 32
-        versionCode 2204
-        versionName "22-04"
+        versionCode 2205
+        versionName "22-05"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
